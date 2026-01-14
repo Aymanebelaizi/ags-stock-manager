@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="mb-3">
+        <a href="{{ path('admin_category_index') }}" class="text-muted text-decoration-none small">
+            <i class="fas fa-arrow-left me-1"></i> Back to Categories
+        </a>
+    </div>
+
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark mb-1">Edit Category #{{ category.id }}</h2>
+        <p class="text-muted small">Update the classification details for your inventory items.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-5 bg-white">
+                <form method="POST">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Category Name</label>
+                            <input type="text" name="name" class="form-control border-0 bg-light rounded-3 py-3" value="{{ category.name }}" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Description</label>
+                            <textarea name="description" class="form-control border-0 bg-light rounded-3 py-3" rows="3">{{ category.description }}</textarea>
+                        </div>
+                        <div class="col-12 text-end pt-3">
+                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-3">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #fff9f0;">
+                <h6 class="fw-bold text-warning mb-3"><i class="fas fa-exclamation-triangle me-2"></i> Important</h6>
+                <p class="small text-muted mb-0">
+                    Changing the name of a category will update all linked products instantly. This might affect your <strong>Dashboard charts</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

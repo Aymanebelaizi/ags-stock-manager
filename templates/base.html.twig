@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AGS | Stock Intelligence{% endblock %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        :root { --emsi-blue: #1a73e8; --sidebar-width: 280px; }
+        body { background-color: #f8fafc; font-family: 'Inter', sans-serif; color: #1e293b; margin: 0; }
+
+        /* --- SIDEBAR STRUCTURE --- */
+        .sidebar { 
+            width: var(--sidebar-width); height: 100vh; position: fixed; 
+            background: var(--emsi-blue); color: white; padding: 2rem 1.2rem; 
+            display: flex; flex-direction: column; z-index: 1000; 
+        }
+
+        .brand { display: flex; justify-content: center; margin-bottom: 2.5rem !important; text-decoration: none; }
+        .sidebar-logo { width: 160px; height: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
+
+        .sidebar-nav-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        
+        .nav-link { 
+            color: rgba(255,255,255,0.8); border-radius: 12px; padding: 0.8rem 1.2rem; 
+            margin-bottom: 0.3rem; transition: 0.3s; display: flex; align-items: center; 
+            text-decoration: none; font-weight: 500;
+        }
+        .nav-link:hover { color: white; background: rgba(255,255,255,0.1); }
+        .nav-link.active { background: rgba(255,255,255,0.2); color: white; }
+        .nav-link i { width: 35px; font-size: 1.1rem; }
+
+        .sidebar-divider { border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 1.5rem 0.5rem; }
+
+        .logout-container { margin-top: auto; padding-top: 1rem; }
+        .logout-link:hover { background: rgba(255, 75, 92, 0.1) !important; color: #ff4b5c !important; }
+
+        /* --- HEADER & RECHERCHE --- */
+        .top-header { 
+            margin-left: var(--sidebar-width); height: 85px; background: white; 
+            border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 3.5rem; position: sticky; top: 0; z-index: 999; 
+        }
+        .search-box { position: relative; width: 420px; }
+        .search-box input { 
+            width: 100%; padding: 0.7rem 1rem 0.7rem 3rem; border-radius: 12px; 
+            border: 2px solid #cbd5e1; background: #f8fafc; outline: none; 
+        }
+        .search-box i { position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+
+        .content { margin-left: var(--sidebar-width); padding: 3.5rem; min-height: calc(100vh - 85px); }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <a href="{{ path('admin_product_index') }}" class="brand">
+        <img src="{{ asset('images/logo.png') }}" alt="Logo AGS" class="sidebar-logo" style="width: 150px;">
+    </a>
+    
+    <nav class="sidebar-nav-content">
+        <a href="{{ path('admin_product_index') }}" class="nav-link {{ app.request.get('_route') starts with 'admin_product' ? 'active' : '' }}">
+            <i class="fas fa-box me-3"></i> Produits
+        </a>
+        <a href="{{ path('admin_movement_index') }}" class="nav-link {{ app.request.get('_route') starts with 'admin_movement' ? 'active' : '' }}">
+            <i class="fas fa-exchange-alt me-3"></i> Mouvements
+        </a>
+        <a href="{{ path('admin_category_index') }}" class="nav-link {{ app.request.get('_route') starts with 'admin_category' ? 'active' : '' }}">
+            <i class="fas fa-tags me-3"></i> Catégories
+        </a>
+
+        {% if is_granted('ROLE_MANAGER') %}
+            <div class="sidebar-divider"></div>
+            <a href="{{ path('admin_purchase_index') }}" class="nav-link {{ app.request.get('_route') starts with 'admin_purchase' ? 'active' : '' }}">
+                <i class="fas fa-file-alt me-3"></i> Demandes
+                {{ render(controller('App\\Controller\\Admin\\PurchaseRequestController::countPending')) }}
+            </a>
+            <a href="{{ path('admin_supplier_index') }}" class="nav-link {{ app.request.get('_route') starts with 'admin_supplier' ? 'active' : '' }}">
+                <i class="fas fa-truck me-3"></i> Fournisseurs
+            </a>
+        {% endif %}
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="sidebar-divider"></div>
+            <a href="{{ path('admin_dashboard') }}" class="nav-link">
+                <i class="fas fa-th-large me-3"></i> Dashboard
+            </a>
+            <a href="{{ path('admin_user_index') }}" class="nav-link">
+                <i class="fas fa-users-cog me-3"></i> Session Manager
+            </a>
+        {% endif %}
+    </nav>
+
+    <div class="logout-container">
+        <hr style="border-color: rgba(255,255,255,0.1); margin-bottom: 1rem;">
+        <a href="{{ path('app_logout') }}" class="nav-link"><i class="fas fa-power-off me-3"></i> Déconnexion</a>
+    </div>
+</aside>
+    <div class="top-header">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="global-search" placeholder="Rechercher...">
+        </div>
+        
+        <div class="d-flex align-items-center gap-4 border-start ps-4">
+            {% if app.user %}
+                <div class="text-end">
+                    <div class="fw-bold small text-dark">Administrateur EMSI</div>
+                    <div class="text-muted small" style="font-size: 11px;">{{ app.user.email }}</div>
+                </div>
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 45px; height: 45px;">AD</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <main class="content">
+        {% block body %}{% endblock %}
+    </main>
+
+    <script>
+        // Recherche en temps réel
+        document.getElementById('global-search')?.addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            document.querySelectorAll('.content table tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+            });
+        });
+
+        // Export Excel
+        function exportToExcel(tableId, fileName = 'Export_AGS') {
+            const table = document.getElementById(tableId);
+            if (!table) return alert("Tableau introuvable !");
+            const workbook = XLSX.utils.table_to_book(table, { sheet: "Données" });
+            XLSX.writeFile(workbook, fileName + ".xlsx");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="mb-5">
+        <h1 class="fw-bold h2 mb-1">Decision Dashboard</h1>
+        <p class="text-muted small">Cahier des charges v1.1 - Données EMSI en temps réel</p>
+    </div>
+
+    {# 1. Cartes de statistiques (Valeurs réelles) #}
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 text-white" style="background: #1a73e8;">
+                <small class="fw-bold opacity-75 uppercase">Total Products</small>
+                <h2 class="fw-bold mb-0 mt-2">{{ totalProducts }} <span class="fs-6 fw-normal">items</span></h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 text-white" style="background: #ef4444;">
+                <small class="fw-bold opacity-75 uppercase">Products at Risk</small>
+                <h2 class="fw-bold mb-0 mt-2">{{ atRiskCount|format('%02d') }} <span class="fs-6 fw-normal">items</span></h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 text-white" style="background: #10b981;">
+                <small class="fw-bold opacity-75 uppercase">Shipments</small>
+                <h2 class="fw-bold mb-0 mt-2">{{ shipmentCount }} <span class="fs-6 fw-normal">units</span></h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 text-white" style="background: #f59e0b;">
+                <small class="fw-bold opacity-75 uppercase">Pending Requests</small>
+                <h2 class="fw-bold mb-0 mt-2">{{ pendingRequests|length|format('%02d') }} <span class="fs-6 fw-normal">units</span></h2>
+            </div>
+        </div>
+    </div>
+
+    {# 2. Tableau des requêtes (Sans le champ requestedBy pour éviter l'erreur SQL) #}
+    <div class="card border-0 shadow-sm p-4 rounded-4 mb-5 bg-white">
+        <h5 class="fw-bold mb-4">Pending Purchase Requests</h5>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr class="text-muted small text-uppercase">
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pr in pendingRequests %}
+                        <tr>
+                            <td>
+                                <span class="fw-bold text-primary">{{ pr.product.name }}</span><br>
+                                <small class="text-muted">{{ pr.justification }}</small>
+                            </td>
+                            <td><span class="badge bg-light text-dark border px-3">{{ pr.quantity }} units</span></td>
+                            <td><small class="text-muted">{{ pr.createdAt|date('d/m/Y') }}</small></td>
+                            <td class="text-end">
+                                <a href="{{ path('admin_purchase_approve', {id: pr.id}) }}" class="btn btn-success px-4 py-2 rounded-3 fw-bold">Approve</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {# 3. Les 5 Diagrammes Google Charts restaurés #}
+    <div id="data-store" data-stats="{{ categoryData|json_encode|e('html_attr') }}"></div>
+    <div class="row g-4 mb-5">
+        <div class="col-md-6"><div class="card border-0 shadow-sm p-4 h-100 bg-white"><h6 class="fw-bold mb-3">1. Distribution (Pie Chart)</h6><div id="pie_chart"></div></div></div>
+        <div class="col-md-6"><div class="card border-0 shadow-sm p-4 h-100 bg-white"><h6 class="fw-bold mb-3">2. Inventory Volume (Bar Chart)</h6><div id="bar_chart"></div></div></div>
+        <div class="col-md-8"><div class="card border-0 shadow-sm p-4 h-100 bg-white"><h6 class="fw-bold mb-3">3. Purchase Trends (Line Chart)</h6><div id="line_chart"></div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm p-4 h-100 bg-white text-center"><h6 class="fw-bold mb-3">4. Capacity (Donut)</h6><div id="donut_chart"></div><h3 class="fw-bold mt-2">87%</h3></div></div>
+        <div class="col-md-12"><div class="card border-0 shadow-sm p-4 h-100 bg-white"><h6 class="fw-bold mb-3">5. Stock vs. Outflow (Column Chart)</h6><div id="col_chart"></div></div></div>
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart', 'bar', 'line']});
+        google.charts.setOnLoadCallback(renderCharts);
+
+        function renderCharts() {
+            const collection = JSON.parse(document.getElementById('data-store').dataset.stats);
+            const dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', 'Category');
+            dataTable.addColumn('number', 'Value');
+            collection.forEach(item => dataTable.addRow([item.categoryName, parseInt(item.count)]));
+
+            const palette = ['#1a73e8', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6'];
+            const commonOptions = { backgroundColor: 'transparent', chartArea: {width: '85%', height: '80%'}, animation: {startup: true, duration: 1000, easing: 'out'} };
+
+            // Restauration des 5 graphiques
+            new google.visualization.PieChart(document.getElementById('pie_chart')).draw(dataTable, { ...commonOptions, colors: palette, legend: { position: 'right' } });
+            new google.visualization.BarChart(document.getElementById('bar_chart')).draw(dataTable, { ...commonOptions, colors: ['#1a73e8'], legend: 'none' });
+            new google.visualization.LineChart(document.getElementById('line_chart')).draw(dataTable, { ...commonOptions, colors: ['#8b5cf6'], curveType: 'function', legend: 'none' });
+            new google.visualization.PieChart(document.getElementById('donut_chart')).draw(dataTable, { ...commonOptions, pieHole: 0.7, colors: palette, legend: 'none' });
+            new google.visualization.ColumnChart(document.getElementById('col_chart')).draw(dataTable, { ...commonOptions, colors: ['#10b981'], legend: 'none' });
+        }
+    </script>
+{% endblock %}

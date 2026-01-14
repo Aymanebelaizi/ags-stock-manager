@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="mb-4">
+        <a href="{{ path('admin_purchase_index') }}" class="btn btn-sm btn-light border mb-3"><i class="fas fa-arrow-left"></i> Retour</a>
+        <h1 class="fw-bold h2">Détails de la Demande #{{ pr.id }}</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                <div class="mb-4">
+                    <label class="text-muted small text-uppercase fw-bold">Produit</label>
+                    <h4 class="fw-bold text-primary">{{ pr.product.name }}</h4>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="text-muted small text-uppercase fw-bold">Quantité Demandée</label>
+                        <div class="h5">{{ pr.quantity }} unités</div>
+                    </div>
+                    <div class="col-6">
+                        <label class="text-muted small text-uppercase fw-bold">Statut Actuel</label>
+                        <div>
+                            <span class="badge {{ pr.status == 'pending' ? 'bg-warning' : (pr.status == 'Validée' ? 'bg-success' : 'bg-danger') }} px-3 rounded-pill">
+                                {{ pr.status|capitalize }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="text-muted small text-uppercase fw-bold">Justification</label>
+                    <p class="p-3 bg-light rounded-3">{{ pr.justification }}</p>
+                </div>
+                <hr>
+                <div class="d-flex gap-2">
+                    {% if pr.status == 'pending' %}
+                        <a href="{{ path('admin_purchase_approve', {id: pr.id}) }}" class="btn btn-success fw-bold px-4">Valider la commande</a>
+                        <a href="{{ path('admin_purchase_reject', {id: pr.id}) }}" class="btn btn-outline-danger px-4">Refuser</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-primary text-white">
+                <h6 class="fw-bold mb-3">Informations Traçabilité</h6>
+                <div class="mb-3">
+                    <small class="opacity-75">Demandé par :</small><br>
+                    <strong>{{ pr.requestedBy.email|default('Admin Système') }}</strong>
+                </div>
+                <div>
+                    <small class="opacity-75">Date de soumission :</small><br>
+                    <strong>{{ pr.createdAt|date('d/m/Y à H:i') }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

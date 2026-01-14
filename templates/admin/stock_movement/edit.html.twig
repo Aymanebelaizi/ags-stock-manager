@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Mouvement | AGS{% endblock %}
+
+{% block body %}
+    <div class="mb-4">
+        <a href="{{ path('admin_movement_index') }}" class="text-muted text-decoration-none small">
+            <i class="fas fa-arrow-left me-1"></i> Annuler
+        </a>
+        <h1 class="fw-bold h2 mt-2">Modifier le Mouvement</h1>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4 rounded-4 bg-white" style="max-width: 800px;">
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-md-6 mb-3">{{ form_row(form.product) }}</div>
+                <div class="col-md-6 mb-3">{{ form_row(form.type) }}</div>
+            </div>
+            <div class="mb-3">{{ form_row(form.quantity) }}</div>
+            <div class="mb-4">{{ form_row(form.comment) }}</div>
+            
+            <button class="btn btn-primary px-5 py-2 fw-bold shadow-sm">Enregistrer les modifications</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

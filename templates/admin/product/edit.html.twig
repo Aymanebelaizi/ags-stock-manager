@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="mb-5">
+        <a href="{{ path('admin_product_index') }}" class="text-decoration-none small fw-bold text-muted">
+            <i class="fas fa-times me-2"></i> Cancel Editing
+        </a>
+        <h1 class="fw-bold h2 mt-3">Edit Product: {{ product.name }}</h1>
+    </div>
+
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-5 rounded-4 bg-white">
+                <div class="row g-4">
+                    <div class="col-md-6">{{ form_row(form.name) }}</div>
+                    <div class="col-md-6">{{ form_row(form.reference) }}</div>
+                    <div class="col-md-6">{{ form_row(form.category) }}</div>
+                    <div class="col-md-6">{{ form_row(form.quantity) }}</div>
+                    <div class="col-md-4">{{ form_row(form.alertThreshold) }}</div>
+                    <div class="col-md-4">{{ form_row(form.purchasePrice) }}</div>
+                    <div class="col-md-4">{{ form_row(form.salesPrice) }}</div>
+
+                    <div class="col-12 mt-5 text-end border-top pt-4">
+                        <button type="submit" class="btn btn-primary px-5 py-3 fw-bold rounded-3 shadow-sm" style="background: #1a73e8 !important;">
+                            Update Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

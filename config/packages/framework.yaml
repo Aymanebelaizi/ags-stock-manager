@@ -1,0 +1,16 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    secret: '6789e02787e9a8f6d63914a1f592759e'
+    # ... reste du fichier
+
+    # Note that the session will be started ONLY if you read or write from it.
+    session: true
+
+    #esi: true
+    #fragments: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

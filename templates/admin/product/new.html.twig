@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="mb-5">
+        <a href="{{ path('admin_product_index') }}" class="text-decoration-none small fw-bold text-muted">
+            <i class="fas fa-arrow-left me-2"></i> Back to Inventory
+        </a>
+        <h1 class="fw-bold h2 mt-3">Register New Product</h1>
+        <p class="text-muted small">Fill in the details to add a new item to the AGS system.</p>
+    </div>
+
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-5 rounded-4 bg-white">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Name</label>
+                        {{ form_widget(form.name) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Reference</label>
+                        {{ form_widget(form.reference) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Category</label>
+                        {{ form_widget(form.category) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Quantity</label>
+                        {{ form_widget(form.quantity) }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Alert threshold</label>
+                        {{ form_widget(form.alertThreshold) }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Purchase price</label>
+                        {{ form_widget(form.purchasePrice) }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Sales price</label>
+                        {{ form_widget(form.salesPrice) }}
+                    </div>
+
+                    <div class="col-12 mt-5 text-end border-top pt-4">
+                        <button type="submit" class="btn btn-primary px-5 py-3 fw-bold rounded-3 shadow-sm" style="background: #1a73e8 !important;">
+                            Save Product
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-light">
+                <h6 class="fw-bold mb-3 text-primary"><i class="fas fa-info-circle me-2"></i> Quick Tip</h6>
+                <p class="small text-muted mb-0">
+                    The <strong>Alert Threshold</strong> will trigger a notification when stock reaches this level. 
+                    Make sure prices are entered in <strong>MAD</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

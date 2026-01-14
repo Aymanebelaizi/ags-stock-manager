@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Mouvement | AGS{% endblock %}
+
+{% block body %}
+    <div class="mb-4">
+        <a href="{{ path('admin_movement_index') }}" class="text-muted text-decoration-none small">
+            <i class="fas fa-arrow-left me-1"></i> Back to History
+        </a>
+        <h1 class="fw-bold h2 mt-2">Add New Movement</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                {{ form_start(form) }}
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Produit</label>
+                            {{ form_widget(form.product) }}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Type de Mouvement</label>
+                            {{ form_widget(form.type) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Quantité</label>
+                            {{ form_widget(form.quantity) }}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Note / Commentaire</label>
+                            {{ form_widget(form.comment) }}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button class="btn btn-primary px-5 py-3 fw-bold rounded-3 shadow-sm" type="submit" style="background: #1a73e8 !important;">
+                            <i class="fas fa-save me-2"></i> Enregistrer le Mouvement
+                        </button>
+                        <a href="{{ path('admin_movement_index') }}" class="btn btn-light px-4 py-3 fw-bold ms-2 rounded-3">Annuler</a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        {# Section Info #}
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 rounded-4" style="background: #e8f0fe;">
+                <h5 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i> Aide Rapide</h5>
+                <ul class="small text-muted ps-3">
+                    <li class="mb-2"><b>Entrée (IN) :</b> Augmente le stock disponible du produit.</li>
+                    <li class="mb-2"><b>Sortie (OUT) :</b> Diminue le stock. Le système bloquera l'action si la quantité dépasse le stock actuel.</li>
+                    <li>Chaque mouvement est horodaté et enregistré pour la traçabilité.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

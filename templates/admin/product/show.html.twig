@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="mb-5">
+        <a href="{{ path('admin_product_index') }}" class="text-decoration-none small fw-bold text-muted">
+            <i class="fas fa-arrow-left me-2"></i> Back to Inventory
+        </a>
+        <h1 class="fw-bold h2 mt-3">{{ product.name }}</h1>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white mb-4">
+                <h5 class="fw-bold mb-4 text-primary"><i class="fas fa-info-circle me-2"></i> Details</h5>
+                <div class="row g-4">
+                    <div class="col-md-6"><small class="text-muted d-block fw-bold">REF</small><span class="fs-5">{{ product.reference }}</span></div>
+                    <div class="col-md-6"><small class="text-muted d-block fw-bold">CAT</small><span class="badge bg-info bg-opacity-10 text-info px-3">{{ product.category ? product.category.name : 'N/A' }}</span></div>
+                    <div class="col-md-6"><small class="text-muted d-block fw-bold">BUY</small><span>{{ product.purchasePrice|number_format(2) }} MAD</span></div>
+                    <div class="col-md-6"><small class="text-muted d-block fw-bold">SELL</small><span>{{ product.salesPrice|number_format(2) }} MAD</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white h-100 text-center">
+                <h5 class="fw-bold mb-4 text-primary">Current Stock</h5>
+                <h2 class="display-4 fw-bold {{ product.quantity <= product.alertThreshold ? 'text-danger' : 'text-primary' }}">{{ product.quantity }}</h2>
+                <p class="text-muted">Threshold: {{ product.alertThreshold }} units</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

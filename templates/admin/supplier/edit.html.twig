@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Supplier | AGS.Pro{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="mb-3">
+        <a href="{{ path('admin_supplier_index') }}" class="text-muted text-decoration-none small">
+            <i class="fas fa-arrow-left me-1"></i> Back to Suppliers
+        </a>
+    </div>
+
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark mb-1">Edit Supplier: {{ supplier.name }}</h2>
+        <p class="text-muted small">Update partnership details and contact information.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-5 bg-white">
+                {# On utilise une balise form standard au lieu de form_start(form) #}
+                <form action="{{ path('admin_supplier_edit', {id: supplier.id}) }}" method="POST">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Supplier Name</label>
+                            <input type="text" name="name" class="form-control border-0 bg-light rounded-3 py-3" value="{{ supplier.name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Email Address</label>
+                            <input type="email" name="email" class="form-control border-0 bg-light rounded-3 py-3" value="{{ supplier.email }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Phone Number</label>
+                            <input type="text" name="phone" class="form-control border-0 bg-light rounded-3 py-3" value="{{ supplier.phone }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Full Address</label>
+                            <textarea name="address" class="form-control border-0 bg-light rounded-3 py-3" rows="3">{{ supplier.address }}</textarea>
+                        </div>
+                        <div class="col-12 text-end pt-3">
+                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-3 shadow-sm">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #fff9f0;">
+                <h6 class="fw-bold text-warning mb-3"><i class="fas fa-exclamation-triangle me-2"></i> Important</h6>
+                <p class="small text-muted mb-0">
+                    Updating supplier details will reflect across all products linked to this partner in the <strong>Stock Intelligence</strong> system.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

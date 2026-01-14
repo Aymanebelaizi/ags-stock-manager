@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Mouvement | AGS{% endblock %}
+
+{% block body %}
+    <div class="mb-4">
+        <a href="{{ path('admin_movement_index') }}" class="text-muted text-decoration-none small">
+            <i class="fas fa-arrow-left me-1"></i> Retour à l'historique
+        </a>
+        <h1 class="fw-bold h2 mt-2">Détails du Mouvement #{{ movement.id }}</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                <div class="row mb-4">
+                    <div class="col-sm-4 text-muted small text-uppercase fw-bold">Produit</div>
+                    <div class="col-sm-8 fw-bold text-primary">{{ movement.product.name }}</div>
+                </div>
+                <hr class="opacity-10">
+                <div class="row mb-4">
+                    <div class="col-sm-4 text-muted small text-uppercase fw-bold">Type</div>
+                    <div class="col-sm-8">
+                        <span class="badge {{ movement.type == 'IN' ? 'bg-success' : 'bg-danger' }} bg-opacity-10 {{ movement.type == 'IN' ? 'text-success' : 'text-danger' }} px-3 rounded-pill">
+                            {{ movement.type == 'IN' ? 'ENTRÉE' : 'SORTIE' }}
+                        </span>
+                    </div>
+                </div>
+                <hr class="opacity-10">
+                <div class="row mb-4">
+                    <div class="col-sm-4 text-muted small text-uppercase fw-bold">Quantité</div>
+                    <div class="col-sm-8 fw-bold fs-5">{{ movement.quantity }} unités</div>
+                </div>
+                <hr class="opacity-10">
+                <div class="row mb-4">
+                    <div class="col-sm-4 text-muted small text-uppercase fw-bold">Note / Commentaire</div>
+                    <div class="col-sm-8 text-muted italic">{{ movement.comment|default('Aucune note enregistrée') }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
