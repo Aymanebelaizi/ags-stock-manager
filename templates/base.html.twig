@@ -76,10 +76,10 @@
 
         {% if is_granted('ROLE_MANAGER') %}
             <div class="sidebar-divider"></div>
-            <a href="{{ path('admin_purchase_index') }}" class="nav-link {{ app.request.get('_route') starts with 'admin_purchase' ? 'active' : '' }}">
-                <i class="fas fa-file-alt me-3"></i> Demandes
-                {{ render(controller('App\\Controller\\Admin\\PurchaseRequestController::countPending')) }}
-            </a>
+        <a href="{{ path('admin_purchase_index') }}" class="nav-link {{ app.request.get('_route') starts with 'admin_purchase' ? 'active' : '' }}">
+            <i class="fas fa-file-alt me-3"></i> Demandes
+            {{ render(controller('App\\Controller\\Admin\\PurchaseRequestController::countPending')) }}
+        </a>
             <a href="{{ path('admin_supplier_index') }}" class="nav-link {{ app.request.get('_route') starts with 'admin_supplier' ? 'active' : '' }}">
                 <i class="fas fa-truck me-3"></i> Fournisseurs
             </a>

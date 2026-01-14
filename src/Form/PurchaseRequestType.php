@@ -15,15 +15,16 @@ class PurchaseRequestType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('product', EntityType::class, ['class' => Product::class, 'choice_label' => 'name'])
-            ->add('requestedQuantity')
-            ->add('supplier', EntityType::class, ['class' => Supplier::class, 'choice_label' => 'name'])
-            ->add('estimatedPrice')
-            ->add('justification');
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults(['data_class' => PurchaseRequest::class]);
+            ->add('product', EntityType::class, [
+                'class' => Product::class,
+                'choice_label' => 'name',
+                'label' => 'Produit'
+            ])
+            ->add('quantity', null, [ // Utilise 'quantity' et non 'requestedQuantity'
+                'label' => 'Quantité'
+            ])
+            ->add('justification', null, [
+                'label' => 'Justification (Optionnel)'
+            ]);
     }
 }

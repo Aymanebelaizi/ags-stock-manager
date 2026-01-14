@@ -43,6 +43,7 @@ class PurchaseRequest
     public function getJustification(): ?string { return $this->justification; }
     public function setJustification(?string $justification): static { $this->justification = $justification; return $this; }
     public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self { $this->createdAt = $createdAt; return $this;}
     public function getRequestedBy(): ?User { return $this->requestedBy; }
     public function setRequestedBy(?User $requestedBy): static { $this->requestedBy = $requestedBy; return $this; }
 }
