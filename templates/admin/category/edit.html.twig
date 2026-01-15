@@ -1,44 +1,58 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Modifier Catégorie{% endblock %}
+
 {% block body %}
-<div class="container-fluid">
+<div class="container-fluid px-0">
     <div class="mb-3">
-        <a href="{{ path('admin_category_index') }}" class="text-muted text-decoration-none small">
-            <i class="fas fa-arrow-left me-1"></i> Back to Categories
+        <a href="{{ path('admin_category_index') }}" class="text-decoration-none text-muted small fw-bold text-uppercase">
+            <i class="fas fa-arrow-left me-1"></i> Back to list
         </a>
     </div>
 
     <div class="mb-4">
-        <h2 class="fw-bold text-dark mb-1">Edit Category #{{ category.id }}</h2>
-        <p class="text-muted small">Update the classification details for your inventory items.</p>
+        <h2 class="fw-bold text-dark">Update <span class="text-primary">Category</span></h2>
+        <p class="text-muted small">Modifying category: #{{ category.id }} - {{ category.name }}</p>
     </div>
 
-    <div class="row g-4">
+    <div class="row">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 p-5 bg-white">
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 bg-white p-4">
                 <form method="POST">
                     <div class="row g-4">
                         <div class="col-12">
-                            <label class="form-label fw-bold small text-muted text-uppercase">Category Name</label>
-                            <input type="text" name="name" class="form-control border-0 bg-light rounded-3 py-3" value="{{ category.name }}" required>
+                            <label class="form-label fw-bold small text-muted text-uppercase">Name</label>
+                            <input type="text" name="name" class="form-control form-control-lg rounded-3 border-secondary-subtle shadow-none bg-light bg-opacity-10" 
+                                   value="{{ category.name }}" required>
                         </div>
+
                         <div class="col-12">
                             <label class="form-label fw-bold small text-muted text-uppercase">Description</label>
-                            <textarea name="description" class="form-control border-0 bg-light rounded-3 py-3" rows="3">{{ category.description }}</textarea>
+                            <textarea name="description" class="form-control rounded-3 border-secondary-subtle shadow-none bg-light bg-opacity-10" 
+                                      rows="5">{{ category.description }}</textarea>
                         </div>
-                        <div class="col-12 text-end pt-3">
-                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-3">Save Changes</button>
-                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top">
+                        <a href="{{ path('admin_category_index') }}" class="btn btn-light border px-4 rounded-3 fw-bold">
+                            <i class="fas fa-times me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4 rounded-3 fw-bold shadow-sm">
+                            <i class="fas fa-sync me-1"></i> Update Category
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
-
+        
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #fff9f0;">
-                <h6 class="fw-bold text-warning mb-3"><i class="fas fa-exclamation-triangle me-2"></i> Important</h6>
-                <p class="small text-muted mb-0">
-                    Changing the name of a category will update all linked products instantly. This might affect your <strong>Dashboard charts</strong>.
+            <div class="card border-0 shadow-sm rounded-4 bg-primary text-white p-4 h-100" style="background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%) !important;">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-info-circle me-2 fs-4"></i>
+                    <h5 class="mb-0 fw-bold">Editing Info</h5>
+                </div>
+                <p class="small opacity-90 mb-0">
+                    Updating the category name will automatically update the display for all <strong>{{ category.products|length }} products</strong> linked to it.
                 </p>
             </div>
         </div>

@@ -1,0 +1,56 @@
+{# templates/admin/supplier/_form.html.twig #}
+
+{{ form_start(form) }}
+    {# AJOUT DE LA BORDURE ICI #}
+    <div class="card border border-secondary-subtle shadow-sm rounded-4 p-5 bg-white h-100">
+        
+        <h6 class="text-uppercase text-muted fw-bold mb-4 small border-bottom pb-2">
+            <i class="fas fa-building me-2"></i>Company Details
+        </h6>
+
+        <div class="row g-4 mb-4">
+            {# 1. NOM #}
+            <div class="col-12">
+                <label class="form-label fw-bold text-dark small text-uppercase mb-2">Company Name</label>
+                {{ form_widget(form.name, {'attr': {'class': 'form-control form-control-lg shadow-none border-secondary-subtle'}}) }}
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            {# 2. EMAIL #}
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-dark small text-uppercase mb-2">Email Address</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-secondary-subtle text-muted"><i class="fas fa-envelope"></i></span>
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control shadow-none border-secondary-subtle'}}) }}
+                </div>
+            </div>
+
+            {# 3. TÉLÉPHONE #}
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-dark small text-uppercase mb-2">Phone Number</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-secondary-subtle text-muted"><i class="fas fa-phone"></i></span>
+                    {{ form_widget(form.phone, {'attr': {'class': 'form-control shadow-none border-secondary-subtle'}}) }}
+                </div>
+            </div>
+        </div>
+
+        {# 4. ADRESSE #}
+        <div class="mb-4">
+            <label class="form-label fw-bold text-dark small text-uppercase mb-2">Full Address</label>
+            {{ form_widget(form.address, {'attr': {'class': 'form-control shadow-none border-secondary-subtle', 'rows': 3}}) }}
+        </div>
+
+        {# BOUTONS #}
+        <div class="d-flex justify-content-end gap-3 pt-4 border-top mt-2">
+            <a href="{{ path('admin_supplier_index') }}" class="btn btn-light rounded-pill px-4 fw-bold text-muted border">
+                Cancel
+            </a>
+            <button class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); border:none;">
+                <i class="fas fa-check-circle me-2"></i> {{ button_label|default('Save Partner') }}
+            </button>
+        </div>
+
+    </div>
+{{ form_end(form) }}

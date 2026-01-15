@@ -1,25 +1,82 @@
+{# templates/admin/stock_movement/edit.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier Mouvement | AGS{% endblock %}
+{% block title %}Edit Movement{% endblock %}
 
 {% block body %}
+<div class="container-fluid px-4 py-5 bg-light min-vh-100">
+    
+    {# HEADER #}
     <div class="mb-4">
-        <a href="{{ path('admin_movement_index') }}" class="text-muted text-decoration-none small">
-            <i class="fas fa-arrow-left me-1"></i> Annuler
+        <a href="{{ path('admin_movement_index') }}" class="text-decoration-none text-muted small fw-bold text-uppercase">
+            <i class="fas fa-arrow-left me-2"></i> Back to History
         </a>
-        <h1 class="fw-bold h2 mt-2">Modifier le Mouvement</h1>
+        <h1 class="fw-bold text-dark mt-2">Edit <span class="text-primary">Movement</span></h1>
+        <p class="text-muted">Correct details for a past stock operation.</p>
     </div>
 
-    <div class="card border-0 shadow-sm p-4 rounded-4 bg-white" style="max-width: 800px;">
-        {{ form_start(form) }}
-            <div class="row">
-                <div class="col-md-6 mb-3">{{ form_row(form.product) }}</div>
-                <div class="col-md-6 mb-3">{{ form_row(form.type) }}</div>
-            </div>
-            <div class="mb-3">{{ form_row(form.quantity) }}</div>
-            <div class="mb-4">{{ form_row(form.comment) }}</div>
+    <div class="row g-4">
+        {# COLONNE GAUCHE (Le formulaire a déjà la bordure grâce au fichier précédent) #}
+        <div class="col-lg-8">
+            {{ include('admin/stock_movement/_form.html.twig', {'button_label': 'Validate Operation'}) }}
+        </div>
+
+        {# COLONNE DROITE #}
+        <div class="col-lg-4">
             
-            <button class="btn btn-primary px-5 py-2 fw-bold shadow-sm">Enregistrer les modifications</button>
-        {{ form_end(form) }}
+            {# 1. BLUE CARD (Pas de bordure) #}
+            <div class="card border-0 shadow-sm rounded-4 mb-4 text-white" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-white mb-4 border-bottom border-white border-opacity-25 pb-2">
+                        <i class="fas fa-info-circle me-2"></i>Important Note
+                    </h6>
+                    <div class="d-flex align-items-start">
+                        <span class="badge bg-white text-primary rounded-circle p-2 me-3 mt-1 shadow-sm">
+                            <i class="fas fa-exclamation fa-sm"></i>
+                        </span>
+                        <div>
+                            <span class="fw-bold d-block text-white">Stock Calculation</span>
+                            <small class="text-white opacity-75">
+                                Warning: Modifying the quantity here will <strong>NOT</strong> automatically update the product's current stock level.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# 2. META INFO (Carte Blanche -> AJOUT DE BORDURE) #}
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 mb-4 bg-white">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-muted mb-3 small">Meta Information</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2 d-flex justify-content-between">
+                            <span class="text-muted">Created at:</span>
+                            <span class="fw-bold">{{ movement.createdAt|date('d M Y, H:i') }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between">
+                            <span class="text-muted">Reference:</span>
+                            <span class="fw-bold font-monospace">MOV-{{ movement.id }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {# 3. DANGER ZONE (Pas de bordure) #}
+            <div class="card border-0 shadow-sm rounded-4 text-white overflow-hidden" style="background: linear-gradient(135deg, #ff4d4d 0%, #c0392b 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-white text-uppercase mb-3 border-bottom border-white border-opacity-25 pb-2">
+                        <i class="fas fa-skull-crossbones me-2"></i>Danger Zone
+                    </h6>
+                    <p class="text-white opacity-75 small mb-4">
+                        Deleting this record is permanent and cannot be undone. Please be certain.
+                    </p>
+                    
+                    {{ include('admin/stock_movement/_delete_form.html.twig') }}
+                </div>
+            </div>
+
+        </div>
     </div>
+    
+</div>
 {% endblock %}

@@ -1,64 +1,90 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails Catégorie | AGS.Pro{% endblock %}
+{% block title %}Détails Catégorie | {{ category.name }}{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    {# Correction de la route : admin_category_index au lieu de app_category_index #}
+<div class="container-fluid px-0">
+    {# LIEN DE RETOUR (Style Fil d'Ariane) #}
     <div class="mb-3">
-        <a href="{{ path('admin_category_index') }}" class="text-muted text-decoration-none small">
-            <i class="fas fa-arrow-left me-1"></i> Back to Categories
+        <a href="{{ path('admin_category_index') }}" class="text-decoration-none text-muted small fw-bold text-uppercase">
+            <i class="fas fa-arrow-left me-1"></i> Back to inventory
         </a>
     </div>
 
+    {# TITRE DE LA PAGE #}
     <div class="mb-4">
-        <h2 class="fw-bold text-dark mb-1">Category: {{ category.name }}</h2>
-        <p class="text-muted small">Viewing details and linked products for this classification.</p>
+        <h2 class="fw-bold text-dark">Category <span class="text-primary">Details</span></h2>
+        <p class="text-muted small">Viewing information and products linked to: <strong>{{ category.name }}</strong></p>
     </div>
 
     <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
-                <div class="mb-4">
-                    <label class="form-label fw-bold small text-muted text-uppercase">Description</label>
-                    <p class="bg-light p-3 rounded-3">{{ category.description|default('No description provided.') }}</p>
+        {# COLONNE GAUCHE : INFOS CATÉGORIE #}
+        <div class="col-lg-4">
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 bg-white h-100 p-4">
+                <div class="mb-3">
+                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-1 fw-bold small text-uppercase">
+                        Category Info
+                    </span>
                 </div>
-
-                <h6 class="fw-bold text-dark mb-3">Linked Products ({{ category.products|length }})</h6>
-                <div class="list-group list-group-flush">
-                    {% for product in category.products %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
-                            <div>
-                                <div class="fw-bold">{{ product.name }}</div>
-                                <small class="text-muted">Ref: {{ product.reference }}</small>
-                            </div>
-                            <span class="badge bg-light text-dark border px-3">{{ product.quantity }} in stock</span>
-                        </div>
-                    {% else %}
-                        <div class="text-muted small py-3">No products are currently linked to this category.</div>
-                    {% endfor %}
+                
+                <h3 class="fw-bold text-dark mb-2">{{ category.name }}</h3>
+                <p class="text-muted mb-4">{{ category.description|default('No description provided for this category.') }}</p>
+                
+                <div class="mt-auto pt-3 border-top border-light d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-bold text-uppercase">Total Items</span>
+                    <span class="badge bg-primary rounded-pill px-3 fw-bold">{{ category.products|length }}</span>
+                </div>
+                
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{{ path('admin_category_edit', {id: category.id}) }}" class="btn btn-light border rounded-3 fw-bold text-muted shadow-sm">
+                        <i class="fas fa-pen me-1"></i> Edit Category
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 mb-3 bg-white text-center">
-                <a href="{{ path('admin_category_edit', {id: category.id}) }}" class="btn btn-primary w-100 fw-bold rounded-3 mb-2">
-                    <i class="fas fa-edit me-2"></i> Edit Category
-                </a>
-                {# Formulaire de suppression sécurisé #}
-                <a href="{{ path('admin_category_delete', {id: category.id}) }}" 
-                   class="btn btn-outline-danger w-100 fw-bold rounded-3"
-                   onclick="return confirm('Are you sure you want to delete this category?')">
-                    <i class="fas fa-trash-alt me-2"></i> Delete
-                </a>
-            </div>
-            
-            <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #f0f7ff;">
-                <h6 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i> Category Info</h6>
-                <p class="small text-muted mb-0">
-                    This category ID is <strong>#{{ category.id }}</strong>. It was created to help organize your EMSI inventory.
-                </p>
+        {# COLONNE DROITE : LISTE DES PRODUITS #}
+        <div class="col-lg-8">
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 bg-white h-100">
+                <div class="card-header bg-white py-3 px-4 border-bottom border-secondary-subtle">
+                    <h5 class="mb-0 fw-bold text-dark">Linked Products</h5>
+                </div>
+                
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <tbody>
+                            {% for product in category.products %}
+                                <tr class="border-bottom border-light">
+                                    <td class="ps-4 py-3">
+                                        <div class="fw-bold text-dark">{{ product.name }}</div>
+                                        <div class="text-muted small" style="font-size: 11px;">REF: {{ product.reference }}</div>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        {# BADGES DE STOCK DYNAMIQUES #}
+                                        {% if product.quantity > 5 %}
+                                            <span class="badge rounded-pill px-3 py-1" style="background:#e8f7ef; color:#1f9254; border:1px solid #1f9254;">
+                                                Stock : {{ product.quantity }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge rounded-pill px-3 py-1" style="background:#fdecea; color:#d32f2f; border:1px solid #d32f2f;">
+                                                Stock : {{ product.quantity }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td class="text-center py-5 text-muted italic">
+                                        <i class="fas fa-box-open d-block mb-2 fs-3 opacity-25"></i>
+                                        No products currently linked to this category.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Controller\Admin;
 
 use App\Repository\ProductRepository;
 use App\Repository\PurchaseRequestRepository;
 use App\Repository\StockMovementRepository;
+use App\Repository\CategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,30 +14,89 @@ class DashboardController extends AbstractController
 {
     #[Route('/admin/dashboard', name: 'admin_dashboard')]
     public function index(
-        ProductRepository $productRepo, 
+        ProductRepository $productRepo,
         PurchaseRequestRepository $purchaseRepo,
-        StockMovementRepository $moveRepo
+        StockMovementRepository $moveRepo,
+        CategoryRepository $categoryRepo
     ): Response {
+        // Sécurité : ADMIN uniquement
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $products = $productRepo->findAll();
-        $intelligence = [];
+        /* =======================
+         * 1. KPI PRINCIPAUX
+         * ======================= */
+        $totalProducts  = $productRepo->count([]);
+        $totalMovements = $moveRepo->count([]);
 
-        foreach ($products as $p) {
-            $moveCount = count($p->getStockMovements());
-            if ($moveCount > 5 && $p->getQuantity() < 10) {
-                $intelligence[] = ['name' => $p->getName(), 'status' => 'Rentable', 'color' => 'success'];
-            } elseif ($moveCount === 0) {
-                $intelligence[] = ['name' => $p->getName(), 'status' => 'Risque', 'color' => 'danger'];
+        /* =======================
+         * 2. GRAPHIQUE BAR : TOP STOCK
+         * ======================= */
+        $topProducts = $productRepo->findBy([], ['quantity' => 'DESC'], 5);
+        $barData = [['Product', 'Stock']];
+        foreach ($topProducts as $product) {
+            $barData[] = [$product->getName(), $product->getQuantity()];
+        }
+
+        /* =======================
+         * 3. GRAPHIQUE PIE : CATÉGORIES
+         * ======================= */
+        $categories = $categoryRepo->findAll();
+        $pieData = [['Category', 'Product Count']];
+        foreach ($categories as $category) {
+            $count = count($category->getProducts());
+            if ($count > 0) {
+                $pieData[] = [$category->getName(), $count];
             }
         }
 
+        /* =======================
+         * 4. AIDE À LA DÉCISION (IA SIMPLE)
+         * ======================= */
+        $allProducts = $productRepo->findAll();
+        $intelligence = [];
+
+        foreach ($allProducts as $product) {
+            $movementCount = count($product->getStockMovements());
+
+            if ($product->getQuantity() > 50 && $movementCount < 2) {
+                $intelligence[] = [
+                    'name'   => $product->getName(),
+                    'status' => 'Stock Dormant',
+                    'color'  => 'danger',
+                    'icon'   => 'fa-bed'
+                ];
+            } elseif ($product->getQuantity() < 5) {
+                $intelligence[] = [
+                    'name'   => $product->getName(),
+                    'status' => 'Rupture Proche',
+                    'color'  => 'warning',
+                    'icon'   => 'fa-exclamation-triangle'
+                ];
+            }
+        }
+
+        /* =======================
+         * 5. DEMANDES EN ATTENTE (CORRECTION CLÉ)
+         * ======================= */
+        // ⚠️ IMPORTANT : status = 'pending'
+        $pendingRequests = $purchaseRepo->findBy(
+            ['status' => 'pending'],
+            ['createdAt' => 'DESC'],
+            3
+        );
+
+        /* =======================
+         * 6. RENDER
+         * ======================= */
         return $this->render('admin/dashboard/index.html.twig', [
-            'totalProducts' => count($products),
-            'lowStock' => $productRepo->findBy(['quantity' => 0]),
-            'shipments' => $moveRepo->count(['type' => 'IN']),
-            'pendingRequests' => $purchaseRepo->findBy(['status' => 'pending']),
-            'intelligence' => array_slice($intelligence, 0, 4)
+            'totalProducts'   => $totalProducts,
+            'totalMovements'  => $totalMovements,
+            'lowStock'        => count($intelligence),
+            'pendingRequests' => $pendingRequests,
+            'intelligence'    => array_slice($intelligence, 0, 4),
+            'barData'         => json_encode($barData),
+            'pieData'         => json_encode($pieData),
+            'currentDate'     => new \DateTime(),
         ]);
     }
 }

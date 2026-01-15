@@ -1,57 +1,158 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Détails Demande | AGS{% endblock %}
+
 {% block body %}
-    <div class="mb-4">
-        <a href="{{ path('admin_purchase_index') }}" class="btn btn-sm btn-light border mb-3"><i class="fas fa-arrow-left"></i> Retour</a>
-        <h1 class="fw-bold h2">Détails de la Demande #{{ pr.id }}</h1>
+<div class="container-fluid px-4 py-4 bg-light min-vh-100">
+
+    <div class="mb-4 d-flex justify-content-between align-items-start">
+        <div>
+            <a href="{{ path('admin_purchase_index') }}" class="btn btn-sm btn-light border mb-3">
+                <i class="fas fa-arrow-left me-2"></i> Retour
+            </a>
+            <h1 class="fw-bold h2 mb-1">Détails de la Demande <span class="text-muted">#{{ pr.id }}</span></h1>
+            <p class="text-muted small mb-0">Consultez les informations et traçabilités de cette demande.</p>
+        </div>
+
+        {% set raw = pr.status|default('')|trim|lower %}
+        {% if raw in ['validée','validee','approved'] %}
+            {% set statusKey = 'approved' %}
+        {% elseif raw in ['refusée','refusee','rejected'] %}
+            {% set statusKey = 'rejected' %}
+        {% else %}
+            {% set statusKey = 'pending' %}
+        {% endif %}
+
+        <div class="text-end">
+            {% if statusKey == 'approved' %}
+                <span class="badge rounded-pill px-3 py-2"
+                      style="background:#e8f7ef;color:#1f9254;border:1px solid #1f9254;">
+                    Validée
+                </span>
+            {% elseif statusKey == 'rejected' %}
+                <span class="badge rounded-pill px-3 py-2"
+                      style="background:#fdecea;color:#d32f2f;border:1px solid #d32f2f;">
+                    Refusée
+                </span>
+            {% else %}
+                <span class="badge rounded-pill px-3 py-2"
+                      style="background:#fff4e5;color:#f57c00;border:1px solid #f57c00;">
+                    En attente
+                </span>
+            {% endif %}
+        </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border border-secondary-subtle shadow-sm p-4 p-lg-5 rounded-4 bg-white">
+
                 <div class="mb-4">
-                    <label class="text-muted small text-uppercase fw-bold">Produit</label>
-                    <h4 class="fw-bold text-primary">{{ pr.product.name }}</h4>
-                </div>
-                <div class="row mb-4">
-                    <div class="col-6">
-                        <label class="text-muted small text-uppercase fw-bold">Quantité Demandée</label>
-                        <div class="h5">{{ pr.quantity }} unités</div>
-                    </div>
-                    <div class="col-6">
-                        <label class="text-muted small text-uppercase fw-bold">Statut Actuel</label>
+                    <div class="text-muted small text-uppercase fw-bold">Produit</div>
+                    <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
                         <div>
-                            <span class="badge {{ pr.status == 'pending' ? 'bg-warning' : (pr.status == 'Validée' ? 'bg-success' : 'bg-danger') }} px-3 rounded-pill">
-                                {{ pr.status|capitalize }}
-                            </span>
+                            <h4 class="fw-bold text-dark mb-1">{{ pr.product.name }}</h4>
+                            <div class="text-muted small">{{ pr.product.reference }}</div>
+                        </div>
+
+                        <div class="text-muted small text-end">
+                            <div class="fw-semibold text-dark">Stock actuel</div>
+                            <div>{{ pr.product.quantity }} unités</div>
                         </div>
                     </div>
                 </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-4 border border-secondary-subtle">
+                            <div class="text-muted small text-uppercase fw-bold mb-1">Quantité demandée</div>
+                            <div class="h5 mb-0 fw-bold">{{ pr.quantity }} unités</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-4 border border-secondary-subtle">
+                            <div class="text-muted small text-uppercase fw-bold mb-1">Statut</div>
+                            <div class="fw-semibold">
+                                {% if statusKey == 'approved' %}
+                                    Validée
+                                {% elseif statusKey == 'rejected' %}
+                                    Refusée
+                                {% else %}
+                                    En attente
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mb-4">
-                    <label class="text-muted small text-uppercase fw-bold">Justification</label>
-                    <p class="p-3 bg-light rounded-3">{{ pr.justification }}</p>
+                    <div class="text-muted small text-uppercase fw-bold">Justification</div>
+                    <div class="p-3 bg-light rounded-4 border border-secondary-subtle">
+                        {{ pr.justification ? pr.justification : '—' }}
+                    </div>
                 </div>
-                <hr>
-                <div class="d-flex gap-2">
-                    {% if pr.status == 'pending' %}
-                        <a href="{{ path('admin_purchase_approve', {id: pr.id}) }}" class="btn btn-success fw-bold px-4">Valider la commande</a>
-                        <a href="{{ path('admin_purchase_reject', {id: pr.id}) }}" class="btn btn-outline-danger px-4">Refuser</a>
-                    {% endif %}
-                </div>
+
+                <hr class="my-4">
+
+                {# ✅ Actions : ADMIN uniquement #}
+                {% if is_granted('ROLE_ADMIN') and statusKey == 'pending' %}
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <form method="post" action="{{ path('admin_purchase_approve', {id: pr.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('approve' ~ pr.id) }}">
+                            <button type="submit" class="btn btn-success fw-bold px-4"
+                                    onclick="return confirm('Valider cette demande ?');">
+                                <i class="fas fa-check me-2"></i> Valider
+                            </button>
+                        </form>
+
+                        <form method="post" action="{{ path('admin_purchase_reject', {id: pr.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('reject' ~ pr.id) }}">
+                            <button type="submit" class="btn btn-outline-danger px-4"
+                                    onclick="return confirm('Refuser cette demande ?');">
+                                <i class="fas fa-times me-2"></i> Refuser
+                            </button>
+                        </form>
+
+                        <a href="{{ path('admin_purchase_edit', {id: pr.id}) }}" class="btn btn-light border px-4">
+                            <i class="fas fa-pen me-2"></i> Modifier
+                        </a>
+                    </div>
+                {% endif %}
+
             </div>
         </div>
-        <div class="col-md-4">
+
+        <div class="col-lg-4">
             <div class="card border-0 shadow-sm p-4 rounded-4 bg-primary text-white">
                 <h6 class="fw-bold mb-3">Informations Traçabilité</h6>
+
                 <div class="mb-3">
                     <small class="opacity-75">Demandé par :</small><br>
-                    <strong>{{ pr.requestedBy.email|default('Admin Système') }}</strong>
+                    <strong>{{ pr.requestedBy.email|default('Utilisateur') }}</strong>
                 </div>
-                <div>
+
+                <div class="mb-3">
                     <small class="opacity-75">Date de soumission :</small><br>
-                    <strong>{{ pr.createdAt|date('d/m/Y à H:i') }}</strong>
+                    <strong>{{ pr.createdAt ? pr.createdAt|date('d/m/Y à H:i') : '—' }}</strong>
+                </div>
+
+                <div>
+                    <small class="opacity-75">Référence produit :</small><br>
+                    <strong>{{ pr.product.reference }}</strong>
+                </div>
+            </div>
+
+            <div class="card border border-secondary-subtle shadow-sm p-4 rounded-4 bg-white mt-3">
+                <div class="fw-semibold text-dark mb-2">
+                    <i class="fas fa-circle-info me-2 text-primary"></i> Bon à savoir
+                </div>
+                <div class="small text-muted">
+                    Une demande validée met à jour automatiquement le stock et crée un mouvement <strong>ENTREE</strong>.
                 </div>
             </div>
         </div>
     </div>
+
+</div>
 {% endblock %}

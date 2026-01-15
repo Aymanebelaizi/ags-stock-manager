@@ -1,14 +1,15 @@
 <?php
+
 namespace App\Controller\Admin;
 
 use App\Entity\Product;
+use App\Form\ProductType;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Form\ProductType;
-use Symfony\Component\HttpFoundation\Request;
-use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/admin/product')]
 class ProductController extends AbstractController
@@ -29,6 +30,10 @@ class ProductController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($product);
             $em->flush();
+            
+            // ✅ Ajout du message de succès
+            $this->addFlash('success', 'Product created successfully!');
+            
             return $this->redirectToRoute('admin_product_index');
         }
 
@@ -42,6 +47,10 @@ class ProductController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush(); 
+            
+            // ✅ Ajout du message de succès
+            $this->addFlash('success', 'Product updated successfully!');
+
             return $this->redirectToRoute('admin_product_index');
         }
 
@@ -50,14 +59,22 @@ class ProductController extends AbstractController
             'product' => $product
         ]);
     }
-
+    #[Route('/{id}', name: 'admin_product_show', methods: ['GET'])]
+    public function show(Product $product): Response
+    {
+        return $this->render('admin/product/show.html.twig', [
+            'product' => $product,
+        ]);
+    } 
     #[Route('/{id}/delete', name: 'admin_product_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $em): Response
     {
-        // On vérifie si le token envoyé par le formulaire Twig est correct
         if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
             $em->remove($product);
-            $em->flush(); // C'est ici que la suppression réelle en BDD se fait
+            $em->flush();
+            
+            // ✅ Ajout du message de succès
+            $this->addFlash('success', 'Product deleted.');
         }
 
         return $this->redirectToRoute('admin_product_index');

@@ -3,45 +3,244 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - AGS STOCK</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Poppins', sans-serif; overflow: hidden; }
-        .wrapper { display: flex; height: 100vh; width: 100%; }
-        .left-side { flex: 1.2; background: #2c3e50 url("{{ asset('images/warehouse.jpg') }}") center/cover no-repeat; }
-        .right-side { flex: 1; background: #1a1a1a url("{{ asset('images/circuit-bg.jpg') }}") center/cover no-repeat; display: flex; justify-content: center; align-items: center; }
-        .glass-card { background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(20px); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 25px; padding: 40px; width: 85%; max-width: 420px; color: white; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); }
-        .input-row { background: rgba(255, 255, 255, 0.2); border-radius: 50px; padding: 12px 20px; margin-bottom: 20px; display: flex; align-items: center; }
-        .input-row input { background: transparent; border: none; color: white; outline: none; width: 100%; font-family: 'Poppins'; }
-        .btn-login { width: 100%; padding: 14px; border-radius: 50px; border: none; background: #1a73e8; color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .btn-login:hover { background: #1557b0; transform: translateY(-2px); }
+        /* --- 1. CONFIGURATION DE BASE --- */
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            height: 100%; 
+            font-family: 'Poppins', sans-serif; 
+            overflow: hidden; /* Empêche le scroll sur desktop */
+        }
+
+        .wrapper { 
+            display: flex; 
+            height: 100vh; 
+            width: 100%; 
+        }
+
+        /* --- 2. ZONES GAUCHE ET DROITE --- */
+        .left-side { 
+            flex: 1.2; 
+            background: #2c3e50 url("{{ asset('images/warehouse.jpg') }}") center/cover no-repeat; 
+            position: relative;
+        }
+        /* Petit filtre sombre sur l'image de l'entrepôt */
+        .left-side::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .right-side { 
+            flex: 1; 
+            background: #1a1a1a url("{{ asset('images/circuit-bg.jpg') }}") center/cover no-repeat; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            position: relative;
+        }
+
+        /* --- 3. LA CARTE "VERRE" (GLASSMORPHISM) --- */
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 25px; 
+            padding: 40px; 
+            width: 85%; 
+            max-width: 400px; 
+            color: white; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); 
+            
+            /* Animation d'entrée */
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 4. EN-TÊTE AVEC LOGO --- */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: linear-gradient(to bottom, #fff, #ddd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 35px;
+            opacity: 0.7;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- 5. CHAMPS DE SAISIE (INPUTS) --- */
+        .input-row { 
+            background: rgba(255, 255, 255, 0.15); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px; 
+            padding: 12px 20px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            transition: all 0.3s ease;
+        }
+
+        /* Effet Focus */
+        .input-row:focus-within {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            transform: scale(1.02);
+        }
+
+        .input-row i {
+            margin-right: 15px; 
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .input-row input { 
+            background: transparent; 
+            border: none; 
+            color: white; 
+            outline: none; 
+            width: 100%; 
+            font-family: 'Poppins'; 
+            font-size: 1rem;
+        }
+
+        .input-row input::placeholder { color: rgba(255, 255, 255, 0.6); }
+
+        /* Hack pour retirer le fond jaune/blanc de l'autocomplétion Chrome */
+        .input-row input:-webkit-autofill,
+        .input-row input:-webkit-autofill:hover, 
+        .input-row input:-webkit-autofill:focus, 
+        .input-row input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.05) inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* --- 6. BOUTON DE CONNEXION --- */
+        .btn-login { 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 50px; 
+            border: none; 
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%); 
+            color: white; 
+            font-weight: 600; 
+            font-size: 1rem;
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover { 
+            background: linear-gradient(135deg, #4285f4 0%, #1565c0 100%);
+            transform: translateY(-3px); 
+            box-shadow: 0 0 20px rgba(26, 115, 232, 0.6);
+        }
+
+        /* --- 7. ALERTE D'ERREUR --- */
+        .alert-error {
+            background: rgba(220, 53, 69, 0.85); 
+            color: white;
+            padding: 12px; 
+            border-radius: 12px; 
+            margin-bottom: 20px; 
+            font-size: 13px; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        /* --- 8. RESPONSIVE (MOBILE) --- */
+        @media (max-width: 900px) {
+            .left-side { display: none; }
+            .right-side { width: 100%; background-position: center; }
+            .glass-card { width: 90%; padding: 30px 20px; }
+            body, html { overflow: auto; } /* Réactive le scroll sur mobile si besoin */
+        }
     </style>
 </head>
 <body>
     <div class="wrapper">
         <div class="left-side"></div>
+        
         <div class="right-side">
             <form action="{{ path('app_login') }}" method="post" class="glass-card">
+                
+                {# Gestion des erreurs Symfony #}
                 {% if error %}
-                    <div style="background:rgba(220,53,69,0.6); padding:10px; border-radius:10px; margin-bottom:15px; font-size:12px; border: 1px solid #dc3545;">
-                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    <div class="alert-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>{{ error.messageKey|trans(error.messageData, 'security') }}</span>
                     </div>
                 {% endif %}
-                <h2 class="fw-bold mb-1">Bienvenue!</h2>
-                <p class="subtitle" style="font-size: 14px; margin-bottom: 35px; opacity: 0.9;">Gestion de Stock AGS</p>
 
-                <div class="input-row">
-                    <i class="fas fa-envelope" style="margin-right:15px;"></i>
-                    <input type="email" name="email" value="{{ last_username }}" placeholder="Email Professionnel" required autofocus>
+                {# En-tête : Bienvenue + Logo AGS #}
+                <div class="header-row">
+                    <h2 class="fw-bold" style="margin: 0; font-size: 1.8rem;">Bienvenue !</h2>
+                    <h1 class="logo-text">AGS</h1>
                 </div>
+                
+                <p class="subtitle">Gestion de Stock AGS</p>
+
+                {# Champ Email #}
                 <div class="input-row">
-                    <i class="fas fa-lock" style="margin-right:15px;"></i>
-                    <input type="password" name="password" placeholder="Mot de Passe" required>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="email" value="{{ last_username }}" placeholder="Email Professionnel" required autofocus autocomplete="email">
+                </div>
+                
+                {# Champ Mot de Passe #}
+                <div class="input-row">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Mot de Passe" required autocomplete="current-password">
                 </div>
 
+                {# Token de sécurité requis par Symfony #}
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                
+                {# Bouton #}
                 <button class="btn-login" type="submit">Connexion</button>
+                
+                {# Lien oubli #}
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="#" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 12px; transition: 0.3s;">Mot de passe oublié ?</a>
+                </div>
             </form>
         </div>
     </div>

@@ -1,66 +1,134 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle Demande | AGS.Pro{% endblock %}
+{% block title %}Nouvelle Demande | AGS{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    {# 1. Bouton Retour #}
+<div class="container-fluid px-4 py-4 bg-light min-vh-100">
+
+    {# Retour #}
     <div class="mb-3">
         <a href="{{ path('admin_purchase_index') }}" class="text-muted text-decoration-none small">
-            <i class="fas fa-arrow-left me-1"></i> Back to List
+            <i class="fas fa-arrow-left me-1"></i> Retour à la liste
         </a>
     </div>
 
-    {# 2. Titre et Sous-titre #}
-    <div class="mb-4">
-        <h2 class="fw-bold text-dark mb-1">Create New Purchase Request</h2>
-        <p class="text-muted small">Fill in the details to submit a new material request to the AGS system.</p>
+    {# Titre #}
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                <span class="bg-primary bg-opacity-10 text-primary p-2 rounded-3">
+                    <i class="fas fa-file-circle-plus"></i>
+                </span>
+                Nouvelle demande d’achat
+            </h2>
+            <p class="text-muted small mb-0">
+                Renseignez le produit, la quantité et la justification pour soumettre la demande.
+            </p>
+        </div>
     </div>
 
     <div class="row g-4">
-        {# 3. Formulaire (Style Produit) #}
+        {# Formulaire #}
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
-                <form action="{{ path('admin_purchase_new') }}" method="POST">
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 bg-white">
+                <div class="card-body p-4 p-lg-5">
+
+                    {{ form_start(form, {
+                        action: path('admin_purchase_new'),
+                        attr: { class: 'needs-validation' }
+                    }) }}
+
                     <div class="row g-4">
+
                         <div class="col-md-8">
-                            <label class="form-label fw-bold small text-muted text-uppercase">Product Name</label>
-                            <select name="product_id" class="form-select border-0 bg-light rounded-3 py-3" required>
-                                <option value="" disabled selected>-- Select an item --</option>
-                                {% for p in products %}
-                                    <option value="{{ p.id }}">{{ p.name }} (Current Stock: {{ p.quantity }})</option>
-                                {% endfor %}
-                            </select>
+                            <label class="form-label fw-bold small text-muted text-uppercase mb-2">
+                                Produit
+                            </label>
+
+                            {# Le champ doit exister dans PurchaseRequestType (product) #}
+                            {{ form_widget(form.product, {
+                                attr: {
+                                    class: 'form-select border-0 bg-light rounded-3 py-3'
+                                }
+                            }) }}
+
+                            {% if form_errors(form.product) %}
+                                <div class="small text-danger mt-2">{{ form_errors(form.product) }}</div>
+                            {% endif %}
                         </div>
+
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small text-muted text-uppercase">Quantity</label>
-                            <input type="number" name="quantity" class="form-control border-0 bg-light rounded-3 py-3" min="1" placeholder="Ex: 10" required>
+                            <label class="form-label fw-bold small text-muted text-uppercase mb-2">
+                                Quantité
+                            </label>
+
+                            {{ form_widget(form.quantity, {
+                                attr: {
+                                    class: 'form-control border-0 bg-light rounded-3 py-3',
+                                    min: 1,
+                                    placeholder: 'Ex: 10'
+                                }
+                            }) }}
+
+                            {% if form_errors(form.quantity) %}
+                                <div class="small text-danger mt-2">{{ form_errors(form.quantity) }}</div>
+                            {% endif %}
                         </div>
+
                         <div class="col-12">
-                            <label class="form-label fw-bold small text-muted text-uppercase">Justification</label>
-                            <textarea name="justification" class="form-control border-0 bg-light rounded-3 py-3" rows="4" placeholder="Explain why this material is needed..." required></textarea>
+                            <label class="form-label fw-bold small text-muted text-uppercase mb-2">
+                                Justification
+                            </label>
+
+                            {{ form_widget(form.justification, {
+                                attr: {
+                                    class: 'form-control border-0 bg-light rounded-3 py-3',
+                                    rows: 4,
+                                    placeholder: 'Expliquez pourquoi ce matériel est nécessaire...'
+                                }
+                            }) }}
+
+                            {% if form_errors(form.justification) %}
+                                <div class="small text-danger mt-2">{{ form_errors(form.justification) }}</div>
+                            {% endif %}
                         </div>
-                        <div class="col-12 text-end">
-                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-3 shadow-sm">
-                                Submit Request
+
+                        {# Afficher le reste (CSRF + champs cachés éventuels) #}
+                        {{ form_rest(form) }}
+
+                        <div class="col-12 d-flex justify-content-end gap-2">
+                            <a href="{{ path('admin_purchase_index') }}" class="btn btn-light border rounded-3 px-4">
+                                Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold rounded-3 shadow-sm">
+                                Soumettre la demande
                             </button>
                         </div>
                     </div>
-                </form>
+
+                    {{ form_end(form) }}
+
+                </div>
             </div>
         </div>
 
-        {# 4. Bloc Quick Tip (Identique à l'image_f492cb.png) #}
+        {# Quick Tip #}
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #f0f7ff;">
+            <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color:#f0f7ff;">
                 <h6 class="fw-bold text-primary mb-3">
-                    <i class="fas fa-info-circle me-2"></i> Quick Tip
+                    <i class="fas fa-info-circle me-2"></i> Information
                 </h6>
                 <p class="small text-muted mb-0">
-                    The request will be set to <strong>"Pending"</strong> status. Once an admin approves it, the stock will be automatically updated in the inventory.
+                    La demande sera créée avec le statut <strong>En attente</strong>.
+                    Lorsqu’un administrateur l’approuve, le stock est mis à jour automatiquement.
+                </p>
+                <hr class="my-3" style="opacity:.15;">
+                <p class="small text-muted mb-0">
+                    Astuce : soyez précis dans la justification pour accélérer la validation.
                 </p>
             </div>
         </div>
     </div>
+
 </div>
 {% endblock %}

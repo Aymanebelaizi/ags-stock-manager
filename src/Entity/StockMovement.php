@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\StockMovementRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert; // Import pour la validation
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StockMovementRepository::class)]
 class StockMovement
@@ -19,7 +19,7 @@ class StockMovement
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "La quantité est obligatoire")]
-    #[Assert\Positive(message: "La quantité doit être supérieure à 0")] // Sécurité : pas de stock négatif à la saisie
+    #[Assert\Positive(message: "La quantité doit être supérieure à 0")]
     private ?int $quantity = null;
 
     #[ORM\Column(length: 10)]
@@ -36,7 +36,7 @@ class StockMovement
 
     public function __construct() { $this->createdAt = new \DateTimeImmutable(); }
 
-    // Getters et Setters complets
+    // Getters et Setters
     public function getId(): ?int { return $this->id; }
     public function getProduct(): ?Product { return $this->product; }
     public function setProduct(?Product $product): static { $this->product = $product; return $this; }
@@ -47,4 +47,11 @@ class StockMovement
     public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
     public function getComment(): ?string { return $this->comment; }
     public function setComment(?string $comment): static { $this->comment = $comment; return $this; }
+
+    // La fonction magique pour éviter l'erreur
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
 }

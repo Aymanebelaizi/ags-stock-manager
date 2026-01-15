@@ -1,45 +1,63 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Créer une Catégorie{% endblock %}
+
 {% block body %}
-<div class="container-fluid">
+<div class="container-fluid px-0">
+    {# BACK LINK #}
     <div class="mb-3">
-        <a href="{{ path('admin_category_index') }}" class="text-muted text-decoration-none small">
-            <i class="fas fa-arrow-left me-1"></i> Back to Categories
+        <a href="{{ path('admin_category_index') }}" class="text-decoration-none text-muted small fw-bold text-uppercase">
+            <i class="fas fa-arrow-left me-1"></i> Back to list
         </a>
     </div>
 
     <div class="mb-4">
-        <h2 class="fw-bold text-dark mb-1">Register New Category</h2>
-        <p class="text-muted small">Create a new group to organize your inventory items.</p>
+        <h2 class="fw-bold text-dark">Register New <span class="text-primary">Category</span></h2>
+        <p class="text-muted small">Fill in the details to add a new classification to the AGS system.</p>
     </div>
 
-    <div class="row g-4">
+    <div class="row">
+        {# FORM CARD #}
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 p-5 bg-white">
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 bg-white p-4">
                 <form method="POST">
                     <div class="row g-4">
                         <div class="col-12">
-                            <label class="form-label fw-bold small text-muted text-uppercase">Category Name</label>
-                            <input type="text" name="name" class="form-control border-0 bg-light rounded-3 py-3" placeholder="Ex: Networking Gears" required>
+                            <label class="form-label fw-bold small text-muted text-uppercase">Name</label>
+                            <input type="text" name="name" class="form-control form-control-lg rounded-3 border-secondary-subtle shadow-none bg-light bg-opacity-10" 
+                                   placeholder="Ex: Informatique, Papeterie..." required>
                         </div>
+
                         <div class="col-12">
                             <label class="form-label fw-bold small text-muted text-uppercase">Description</label>
-                            <textarea name="description" class="form-control border-0 bg-light rounded-3 py-3" rows="3" placeholder="Describe the type of products in this category..."></textarea>
+                            <textarea name="description" class="form-control rounded-3 border-secondary-subtle shadow-none bg-light bg-opacity-10" 
+                                      rows="5" placeholder="Describe this category content..."></textarea>
                         </div>
-                        <div class="col-12 text-end pt-3">
-                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-3">Save Category</button>
-                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top">
+                        <a href="{{ path('admin_category_index') }}" class="btn btn-light border px-4 rounded-3 fw-bold">
+                            <i class="fas fa-times me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4 rounded-3 fw-bold shadow-sm">
+                            <i class="fas fa-save me-1"></i> Save Category
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        {# Bloc Quick Tip identique à image_f492cb.png #}
+        {# SIDE TIP CARD #}
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #f0f7ff;">
-                <h6 class="fw-bold text-primary mb-3"><i class="fas fa-lightbulb me-2"></i> Quick Tip</h6>
-                <p class="small text-muted mb-0">
-                    Categories help you filter products in the <strong>Dashboard</strong> charts. Make sure to use clear names for better reporting.
+            <div class="card border-0 shadow-sm rounded-4 bg-primary text-white p-4 h-100" style="background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%) !important;">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-lightbulb me-2 fs-4"></i>
+                    <h5 class="mb-0 fw-bold">Quick Tip</h5>
+                </div>
+                <p class="small opacity-90 mb-0">
+                    Categories help you organize your inventory. A well-defined description helps managers understand which products belong to this family. 
+                    <br><br>
+                    <strong>Note:</strong> You cannot delete a category if it still contains active products.
                 </p>
             </div>
         </div>

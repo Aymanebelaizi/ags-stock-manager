@@ -8,10 +8,14 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class ProductRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry) { parent::__construct($registry, Product::class); }
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Product::class);
+    }
 
     /**
-     * Calcule le nombre de produits par catégorie pour les graphiques
+     * Nombre de produits par catégorie (utile PieChart)
+     * Retour: [ ['categoryName' => '...', 'count' => 12], ... ]
      */
     public function getProductsCountByCategory(): array
     {
@@ -23,11 +27,16 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Produits en stock faible
+     */
     public function findByLowStock(int $threshold): array
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.quantity <= :val')
             ->setParameter('val', $threshold)
-            ->getQuery()->getResult();
+            ->orderBy('p.quantity', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 }

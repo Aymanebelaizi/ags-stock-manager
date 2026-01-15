@@ -1,0 +1,8 @@
+<form method="post" action="{{ path('admin_movement_delete', {'id': movement.id}) }}" onsubmit="return confirm('Are you sure you want to delete this movement permanently?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ movement.id) }}">
+    
+    {# Bouton Blanc sur fond Rouge (Effet "Alerte") #}
+    <button class="btn btn-light text-danger w-100 fw-bold rounded-pill shadow-sm">
+        <i class="fas fa-trash-alt me-2"></i> Delete Movement
+    </button>
+</form>
