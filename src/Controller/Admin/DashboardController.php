@@ -19,27 +19,20 @@ class DashboardController extends AbstractController
         StockMovementRepository $moveRepo,
         CategoryRepository $categoryRepo
     ): Response {
-        // Sécurité : ADMIN uniquement
+        
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        /* =======================
-         * 1. KPI PRINCIPAUX
-         * ======================= */
+       
         $totalProducts  = $productRepo->count([]);
         $totalMovements = $moveRepo->count([]);
 
-        /* =======================
-         * 2. GRAPHIQUE BAR : TOP STOCK
-         * ======================= */
+        
         $topProducts = $productRepo->findBy([], ['quantity' => 'DESC'], 5);
         $barData = [['Product', 'Stock']];
         foreach ($topProducts as $product) {
             $barData[] = [$product->getName(), $product->getQuantity()];
         }
 
-        /* =======================
-         * 3. GRAPHIQUE PIE : CATÉGORIES
-         * ======================= */
         $categories = $categoryRepo->findAll();
         $pieData = [['Category', 'Product Count']];
         foreach ($categories as $category) {
@@ -49,9 +42,7 @@ class DashboardController extends AbstractController
             }
         }
 
-        /* =======================
-         * 4. AIDE À LA DÉCISION (IA SIMPLE)
-         * ======================= */
+       
         $allProducts = $productRepo->findAll();
         $intelligence = [];
 
@@ -75,19 +66,14 @@ class DashboardController extends AbstractController
             }
         }
 
-        /* =======================
-         * 5. DEMANDES EN ATTENTE (CORRECTION CLÉ)
-         * ======================= */
-        // ⚠️ IMPORTANT : status = 'pending'
+      
         $pendingRequests = $purchaseRepo->findBy(
             ['status' => 'pending'],
             ['createdAt' => 'DESC'],
             3
         );
 
-        /* =======================
-         * 6. RENDER
-         * ======================= */
+       
         return $this->render('admin/dashboard/index.html.twig', [
             'totalProducts'   => $totalProducts,
             'totalMovements'  => $totalMovements,

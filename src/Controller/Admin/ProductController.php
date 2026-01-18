@@ -31,7 +31,7 @@ class ProductController extends AbstractController
             $em->persist($product);
             $em->flush();
             
-            // ✅ Ajout du message de succès
+            
             $this->addFlash('success', 'Product created successfully!');
             
             return $this->redirectToRoute('admin_product_index');
@@ -48,7 +48,7 @@ class ProductController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush(); 
             
-            // ✅ Ajout du message de succès
+          
             $this->addFlash('success', 'Product updated successfully!');
 
             return $this->redirectToRoute('admin_product_index');
@@ -73,7 +73,6 @@ class ProductController extends AbstractController
             $em->remove($product);
             $em->flush();
             
-            // ✅ Ajout du message de succès
             $this->addFlash('success', 'Product deleted.');
         }
 

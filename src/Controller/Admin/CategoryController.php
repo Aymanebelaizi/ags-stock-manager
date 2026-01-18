@@ -13,9 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/admin/category')]
 class CategoryController extends AbstractController
 {
-    /**
-     * Liste toutes les catégories de stock
-     */
     #[Route('/', name: 'admin_category_index', methods: ['GET'])]
     public function index(CategoryRepository $repo): Response
     {
@@ -24,9 +21,7 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    /**
-     * Création d'une nouvelle catégorie (Style Product New)
-     */
+   
     #[Route('/new', name: 'admin_category_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
@@ -45,9 +40,7 @@ class CategoryController extends AbstractController
         return $this->render('admin/category/new.html.twig');
     }
 
-    /**
-     * Affiche les détails d'une catégorie et ses produits liés
-     */
+   
     #[Route('/{id}/show', name: 'admin_category_show', methods: ['GET'])]
     public function show(Category $category): Response
     {
@@ -56,9 +49,6 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    /**
-     * Modification d'une catégorie existante
-     */
     #[Route('/{id}/edit', name: 'admin_category_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Category $category, EntityManagerInterface $em): Response
     {
@@ -77,9 +67,7 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    /**
-     * Suppression sécurisée d'une catégorie
-     */
+  
     #[Route('/{id}/delete', name: 'admin_category_delete', methods: ['POST', 'GET'])]
     public function delete(Category $category, EntityManagerInterface $em): Response
     {
