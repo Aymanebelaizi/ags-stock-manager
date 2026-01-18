@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la Demande | AGS{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-4 bg-light min-vh-100">
+
+    <div class="mb-3">
+        <a href="{{ path('admin_purchase_index') }}" class="text-muted text-decoration-none small">
+            <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+        </a>
+    </div>
+
+    {% set pr = purchase_request %}
+
+    {# Normalisation statut (compat ancien) #}
+    {% set raw = pr.status|default('')|trim|lower %}
+    {% if raw in ['validée','validee','approved'] %}
+        {% set statusKey = 'approved' %}
+    {% elseif raw in ['refusée','refusee','rejected'] %}
+        {% set statusKey = 'rejected' %}
+    {% else %}
+        {% set statusKey = 'pending' %}
+    {% endif %}
+
+    <div class="mb-4 d-flex justify-content-between align-items-start">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">
+                Modifier la demande <span class="text-muted">#{{ pr.id }}</span>
+            </h2>
+            <p class="text-muted small mb-0">Mettez à jour les informations de cette demande d’achat.</p>
+        </div>
+
+        <div class="text-end">
+            {% if statusKey == 'approved' %}
+                <span class="badge rounded-pill px-3 py-2"
+                      style="background:#e8f7ef;color:#1f9254;border:1px solid #1f9254;">
+                    Validée
+                </span>
+            {% elseif statusKey == 'rejected' %}
+                <span class="badge rounded-pill px-3 py-2"
+                      style="background:#fdecea;color:#d32f2f;border:1px solid #d32f2f;">
+                    Refusée
+                </span>
+            {% else %}
+                <span class="badge rounded-pill px-3 py-2"
+                      style="background:#fff4e5;color:#f57c00;border:1px solid #f57c00;">
+                    En attente
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 bg-white">
+                <div class="card-body p-4 p-lg-5">
+
+                    {# Option pro : bloquer l’édition si approuvée (facultatif)
+                       Si vous voulez autoriser l’édition quand même, supprimez ce bloc. #}
+                    {% if statusKey != 'pending' %}
+                        <div class="alert alert-warning rounded-4 border-0 shadow-sm">
+                            <div class="fw-semibold mb-1">
+                                <i class="fas fa-triangle-exclamation me-2"></i> Attention
+                            </div>
+                            <div class="small">
+                                Cette demande n’est plus en attente. La modification peut créer des incohérences d’historique.
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {{ form_start(form, {
+                        action: path('admin_purchase_edit', {id: pr.id})
+                    }) }}
+
+                    <div class="row g-4">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold small text-muted text-uppercase mb-2">Produit</label>
+                            {{ form_widget(form.product, {
+                                attr: { class: 'form-select border-0 bg-light rounded-3 py-3' }
+                            }) }}
+                            {% if form_errors(form.product) %}
+                                <div class="small text-danger mt-2">{{ form_errors(form.product) }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small text-muted text-uppercase mb-2">Quantité</label>
+                            {{ form_widget(form.quantity, {
+                                attr: {
+                                    class: 'form-control border-0 bg-light rounded-3 py-3',
+                                    min: 1
+                                }
+                            }) }}
+                            {% if form_errors(form.quantity) %}
+                                <div class="small text-danger mt-2">{{ form_errors(form.quantity) }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-muted text-uppercase mb-2">Justification</label>
+                            {{ form_widget(form.justification, {
+                                attr: {
+                                    class: 'form-control border-0 bg-light rounded-3 py-3',
+                                    rows: 4
+                                }
+                            }) }}
+                            {% if form_errors(form.justification) %}
+                                <div class="small text-danger mt-2">{{ form_errors(form.justification) }}</div>
+                            {% endif %}
+                        </div>
+
+                        {{ form_rest(form) }}
+
+                        <div class="col-12 d-flex justify-content-end gap-2">
+                            <a href="{{ path('admin_purchase_index') }}" class="btn btn-light border rounded-3 px-4">
+                                Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold rounded-3 shadow-sm"
+                                    {% if statusKey != 'pending' %}onclick="return confirm('Cette demande n’est plus en attente. Confirmer la modification ?');"{% endif %}>
+                                Enregistrer
+                            </button>
+                        </div>
+                    </div>
+
+                    {{ form_end(form) }}
+
+                </div>
+            </div>
+        </div>
+
+        {# Bloc Info #}
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color:#fff9f0;">
+                <h6 class="fw-bold text-warning mb-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Important
+                </h6>
+                <p class="small text-muted mb-0">
+                    Il est recommandé de modifier uniquement les demandes <strong>en attente</strong>.
+                    Une demande validée peut impacter l’historique des mouvements de stock.
+                </p>
+            </div>
+
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 p-4 mt-3 bg-white">
+                <div class="small text-muted">
+                    <div class="fw-semibold text-dark mb-2">Rappel des statuts</div>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span>En attente</span>
+                        <span class="badge rounded-pill px-3 py-1" style="background:#fff4e5;color:#f57c00;border:1px solid #f57c00;">Pending</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span>Validée</span>
+                        <span class="badge rounded-pill px-3 py-1" style="background:#e8f7ef;color:#1f9254;border:1px solid #1f9254;">Approved</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span>Refusée</span>
+                        <span class="badge rounded-pill px-3 py-1" style="background:#fdecea;color:#d32f2f;border:1px solid #d32f2f;">Rejected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

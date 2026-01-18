@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container-fluid px-4 py-5 bg-light min-vh-100">
+    <div class="mb-5">
+        <a href="{{ path('admin_product_index') }}" class="text-decoration-none small fw-bold text-muted text-uppercase">
+            <i class="fas fa-arrow-left me-2"></i> Back to Inventory
+        </a>
+        <h1 class="fw-bold h2 mt-3">Register New <span class="text-primary">Product</span></h1>
+        <p class="text-muted small">Fill in the details to add a new item to the AGS system.</p>
+    </div>
+
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border border-secondary-subtle shadow-sm p-5 rounded-4 bg-white">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Name</label>
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control border-secondary-subtle', 'placeholder': 'Ex: HP EliteBook G9'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Reference</label>
+                        {{ form_widget(form.reference, {'attr': {'class': 'form-control border-secondary-subtle', 'placeholder': 'Ex: PC-HP-001'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Category</label>
+                        {{ form_widget(form.category, {'attr': {'class': 'form-select border-secondary-subtle'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Initial Quantity</label>
+                        {{ form_widget(form.quantity, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Alert threshold</label>
+                        {{ form_widget(form.alertThreshold, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Purchase price</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-secondary-subtle text-muted small fw-bold">MAD</span>
+                            {{ form_widget(form.purchasePrice, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Sales price</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-secondary-subtle text-muted small fw-bold">MAD</span>
+                            {{ form_widget(form.salesPrice, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-5 text-end border-top pt-4 d-flex justify-content-end gap-2">
+                        <a href="{{ path('admin_product_index') }}" class="btn btn-light border border-secondary-subtle px-5 py-3 fw-bold rounded-3 shadow-sm text-muted">
+                            <i class="fas fa-times me-2"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary px-5 py-3 fw-bold rounded-3 shadow-sm" style="background: #1a73e8 !important; border: none;">
+                            <i class="fas fa-save me-2"></i> Save Product
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 rounded-4 text-white mb-4" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
+                <h6 class="fw-bold mb-3 text-white border-bottom border-white border-opacity-25 pb-2">
+                    <i class="fas fa-lightbulb me-2"></i> Quick Tip
+                </h6>
+                <p class="small text-white opacity-75 mb-0">
+                    The <strong>Alert Threshold</strong> will trigger a notification when stock reaches this level. 
+                    Ensure prices are accurate to track your inventory value.
+                </p>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

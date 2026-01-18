@@ -1,0 +1,55 @@
+{# templates/admin/stock_movement/_form.html.twig #}
+
+{{ form_start(form) }}
+    {# AJOUT DE 'border border-secondary-subtle' #}
+    <div class="card border border-secondary-subtle shadow-sm rounded-4 p-5 bg-white h-100">
+        
+        <h6 class="text-uppercase text-muted fw-bold mb-4 small border-bottom pb-2">
+            <i class="fas fa-pen-fancy me-2"></i>Data Entry
+        </h6>
+
+        <div class="row g-4 mb-4">
+            {# 1. PRODUCT (Left) #}
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-dark small text-uppercase mb-2">Target Product</label>
+                {{ form_widget(form.product, {'attr': {'class': 'form-select form-select-lg shadow-none border-secondary-subtle'}}) }}
+            </div>
+
+            {# 2. TYPE (Right) #}
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-dark small text-uppercase mb-2">Operation Type</label>
+                {{ form_widget(form.type, {'attr': {'class': 'form-select form-select-lg shadow-none border-0 bg-light text-dark fw-bold'}}) }}
+                <div class="form-text text-muted small mt-2">
+                    <i class="fas fa-exchange-alt me-1"></i> Entry (+) or Exit (-)
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            {# 3. QUANTITY #}
+            <div class="col-md-4">
+                <label class="form-label fw-bold text-dark small text-uppercase mb-2">Quantity</label>
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-white border-end-0 text-muted border-secondary-subtle"><i class="fas fa-hashtag"></i></span>
+                    {{ form_widget(form.quantity, {'attr': {'class': 'form-control border-start-0 shadow-none border-secondary-subtle ps-0', 'placeholder': '0'}}) }}
+                </div>
+            </div>
+            
+            {# 4. NOTE #}
+            <div class="col-md-8">
+                <label class="form-label fw-bold text-dark small text-uppercase mb-2">Note / Reason (Optional)</label>
+                {{ form_widget(form.comment, {'attr': {'class': 'form-control shadow-none border-secondary-subtle', 'rows': 1, 'placeholder': 'Ex: Order #1234, Inventory check...'}}) }}
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 pt-4 border-top mt-2">
+            <a href="{{ path('admin_movement_index') }}" class="btn btn-light rounded-pill px-4 fw-bold text-muted border">
+                Cancel
+            </a>
+            <button class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); border:none;">
+                <i class="fas fa-check-circle me-2"></i> {{ button_label|default('Validate Operation') }}
+            </button>
+        </div>
+
+    </div>
+{{ form_end(form) }}

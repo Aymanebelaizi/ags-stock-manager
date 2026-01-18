@@ -1,0 +1,76 @@
+{# templates/admin/supplier/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Supplier{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-5 bg-light min-vh-100">
+    
+    {# HEADER #}
+    <div class="mb-4">
+        <a href="{{ path('admin_supplier_index') }}" class="text-decoration-none text-muted small fw-bold text-uppercase">
+            <i class="fas fa-arrow-left me-2"></i> Back to Directory
+        </a>
+        <h1 class="fw-bold text-dark mt-2">Edit Supplier: <span class="text-primary">{{ supplier.name }}</span></h1>
+        <p class="text-muted">Update partnership details and contact information.</p>
+    </div>
+
+    <div class="row g-4">
+        {# COLONNE GAUCHE : Formulaire #}
+        <div class="col-lg-8">
+            {{ include('admin/supplier/_form.html.twig', {'button_label': 'Save Changes'}) }}
+        </div>
+
+        {# COLONNE DROITE : Infos & Danger Zone #}
+        <div class="col-lg-4">
+            
+            {# 1. CARTE BLEUE (Info) #}
+            <div class="card border-0 shadow-sm rounded-4 mb-4 text-white" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-white mb-4 border-bottom border-white border-opacity-25 pb-2">
+                        <i class="fas fa-info-circle me-2"></i>Important Note
+                    </h6>
+                    <p class="small text-white opacity-75 mb-0">
+                        Updating supplier details will reflect across all products linked to this partner in the <strong>Stock Intelligence</strong> system.
+                    </p>
+                </div>
+            </div>
+
+            {# 2. META INFO (Carte Blanche avec Bordure) #}
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 mb-4 bg-white">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-muted mb-3 small">Partnership Data</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="d-flex justify-content-between">
+                            <span class="text-muted">Partner ID:</span>
+                            <span class="fw-bold font-monospace">SUP-{{ supplier.id }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {# 3. DANGER ZONE (Rouge) #}
+            <div class="card border-0 shadow-sm rounded-4 text-white overflow-hidden" style="background: linear-gradient(135deg, #ff4d4d 0%, #c0392b 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-white text-uppercase mb-3 border-bottom border-white border-opacity-25 pb-2">
+                        <i class="fas fa-skull-crossbones me-2"></i>Danger Zone
+                    </h6>
+                    <p class="text-white opacity-75 small mb-4">
+                        Deleting this supplier is permanent. Ensure no active orders are pending.
+                    </p>
+                    
+                    {# Bouton Supprimer #}
+                    <form method="post" action="{{ path('admin_supplier_delete', {'id': supplier.id}) }}" onsubmit="return confirm('Are you sure you want to delete this supplier?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ supplier.id) }}">
+                        <button class="btn btn-light text-danger w-100 fw-bold rounded-pill shadow-sm">
+                            <i class="fas fa-trash-alt me-2"></i> Delete Supplier
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

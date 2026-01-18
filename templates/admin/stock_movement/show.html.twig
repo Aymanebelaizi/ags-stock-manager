@@ -1,0 +1,136 @@
+{# templates/admin/stock_movement/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Movement Details{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-5 bg-light min-vh-100">
+    
+    {# HEADER #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="{{ path('admin_movement_index') }}" class="text-decoration-none text-muted small fw-bold text-uppercase">
+                <i class="fas fa-arrow-left me-2"></i> Back to History
+            </a>
+            <h1 class="fw-bold text-dark mt-2">Movement <span class="text-primary">Details</span></h1>
+            <p class="text-muted">View complete information about this transaction.</p>
+        </div>
+        
+        {# BOUTON EDITER #}
+        <div>
+            <a href="{{ path('admin_movement_edit', {'id': movement.id}) }}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                <i class="fas fa-pen me-2"></i> Edit Movement
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {# COLONNE GAUCHE : Information Principale #}
+        <div class="col-lg-8">
+            {# AJOUT DE LA BORDURE ICI #}
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 p-5 bg-white h-100">
+                
+                {# Section Titre #}
+                <div class="d-flex align-items-center mb-5 pb-4 border-bottom">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-4 text-primary">
+                        <i class="fas fa-box fa-2x"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-uppercase text-muted small fw-bold mb-1">Product Name</h6>
+                        <h3 class="fw-bold text-dark mb-0">{{ movement.product.name }}</h3>
+                    </div>
+                </div>
+
+                <div class="row g-5">
+                    {# Colonne Type #}
+                    <div class="col-md-6">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Operation Type</h6>
+                        {% if movement.type in ['ENTREE', 'IN', 'Entrée'] %}
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-4 py-3 rounded-pill fs-6">
+                                <i class="fas fa-arrow-up me-2"></i> Stock Entry (IN)
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-4 py-3 rounded-pill fs-6">
+                                <i class="fas fa-arrow-down me-2"></i> Stock Exit (OUT)
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    {# Colonne Quantité #}
+                    <div class="col-md-6">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Quantity Moved</h6>
+                        <div class="d-flex align-items-center">
+                            <span class="display-6 fw-bold text-dark me-2">{{ movement.quantity }}</span>
+                            <span class="text-muted fw-bold align-self-end mb-2">units</span>
+                        </div>
+                    </div>
+                </div>
+
+                {# Section Note #}
+                <div class="mt-5 pt-4 border-top">
+                    <h6 class="text-uppercase text-muted small fw-bold mb-3">Note / Comment</h6>
+                    <div class="p-4 bg-light rounded-4 border border-secondary-subtle">
+                        {% if movement.comment %}
+                            <p class="mb-0 text-dark fst-italic">"{{ movement.comment }}"</p>
+                        {% else %}
+                            <p class="mb-0 text-muted fst-italic small">No additional notes provided.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {# COLONNE DROITE #}
+        <div class="col-lg-4">
+            
+            {# 1. CARTE BLEUE (Pas de bordure nécessaire, fond coloré) #}
+            <div class="card border-0 shadow-sm rounded-4 mb-4 text-white" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-white mb-4 border-bottom border-white border-opacity-25 pb-2">
+                        <i class="fas fa-chart-pie me-2"></i>Current Status
+                    </h6>
+                    <div class="d-flex align-items-center">
+                        <div class="display-4 fw-bold me-3">{{ movement.product.quantity }}</div>
+                        <div class="small text-white opacity-75 lh-sm">
+                            Available units in stock for<br><strong>{{ movement.product.name }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# 2. CARTE BLANCHE (Metadata) - AJOUT DE LA BORDURE ICI #}
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 mb-4 bg-white">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-muted mb-3 small">Meta Information</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2 d-flex justify-content-between">
+                            <span class="text-muted">Created at:</span>
+                            <span class="fw-bold">{{ movement.createdAt|date('d M Y, H:i') }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between">
+                            <span class="text-muted">Reference:</span>
+                            <span class="fw-bold font-monospace">MOV-{{ movement.id }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {# 3. DANGER ZONE (Rouge - Pas de bordure nécessaire) #}
+            <div class="card border-0 shadow-sm rounded-4 text-white overflow-hidden" style="background: linear-gradient(135deg, #ff4d4d 0%, #c0392b 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-white text-uppercase mb-3 border-bottom border-white border-opacity-25 pb-2">
+                        <i class="fas fa-skull-crossbones me-2"></i>Danger Zone
+                    </h6>
+                    <p class="text-white opacity-75 small mb-4">
+                        Deleting this record is permanent and cannot be undone.
+                    </p>
+                    
+                    {{ include('admin/stock_movement/_delete_form.html.twig') }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

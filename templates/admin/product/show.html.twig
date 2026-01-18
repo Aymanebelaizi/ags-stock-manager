@@ -1,0 +1,149 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Product Details{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-5 bg-light min-vh-100">
+    
+    {# HEADER #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="{{ path('admin_product_index') }}" class="text-decoration-none small fw-bold text-muted text-uppercase">
+                <i class="fas fa-arrow-left me-2"></i> Back to Inventory
+            </a>
+            <h1 class="fw-bold text-dark mt-2">Product <span class="text-primary">Details</span></h1>
+            <p class="text-muted small">Full overview of the product specifications and stock status.</p>
+        </div>
+        
+        <div>
+            <a href="{{ path('admin_product_edit', {'id': product.id}) }}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                <i class="fas fa-pen me-2"></i> Edit Product
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {# COLONNE GAUCHE : Informations (Bordure Grise ajoutée) #}
+        <div class="col-lg-8">
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 p-5 bg-white h-100">
+                
+                {# Section Header Produit #}
+                <div class="d-flex align-items-center mb-5 pb-4 border-bottom border-light">
+                    <div class="bg-primary bg-opacity-10 p-4 rounded-4 me-4 text-primary border border-primary border-opacity-10">
+                        <i class="fas fa-box-open fa-2x"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-uppercase text-muted small fw-bold mb-1">Product Name</h6>
+                        <h3 class="fw-bold text-dark mb-0">{{ product.name }}</h3>
+                        <span class="badge bg-light text-muted border border-secondary-subtle mt-2 font-monospace px-3 py-2 rounded-pill">
+                            REF: {{ product.reference }}
+                        </span>
+                    </div>
+                </div>
+
+                {# Grid Details #}
+                <div class="row g-5 mb-5">
+                    <div class="col-md-6">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Category</h6>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-2 me-3 text-muted border border-secondary-subtle">
+                                <i class="fas fa-tags fa-fw"></i>
+                            </div>
+                            <span class="fw-bold text-dark">{{ product.category.name }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {# Section Prix (Style "Note" encadré) #}
+                <div class="mt-4">
+                    <h6 class="text-uppercase text-muted small fw-bold mb-4">Financial Overview</h6>
+                    <div class="p-4 rounded-4 border border-secondary-subtle bg-light bg-opacity-50">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 border-end border-secondary-subtle">
+                                <div class="px-3">
+                                    <span class="d-block small text-muted text-uppercase fw-bold mb-2">Purchase Price</span>
+                                    <span class="h4 fw-bold text-dark mb-0">{{ product.purchasePrice|number_format(2) }} <small class="h6">MAD</small></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="px-3">
+                                    <span class="d-block small text-success text-uppercase fw-bold mb-2">Sales Price</span>
+                                    <span class="h4 fw-bold text-success mb-0">{{ product.salesPrice|number_format(2) }} <small class="h6 text-success">MAD</small></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {# COLONNE DROITE : Sidebar #}
+        <div class="col-lg-4">
+            
+            {# 1. STATUS CARD (Bleue dégradée) #}
+            <div class="card border-0 shadow-sm rounded-4 text-white mb-4" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-white mb-4 border-bottom border-white border-opacity-25 pb-2 small">
+                        <i class="fas fa-warehouse me-2"></i> Inventory Status
+                    </h6>
+                    <div class="d-flex align-items-baseline mb-2">
+                        <span class="display-5 fw-bold me-2">{{ product.quantity }}</span>
+                        <span class="h5 opacity-75 fw-normal">Units</span>
+                    </div>
+                    
+                    {# Alerte visuelle #}
+                    <div class="mt-4">
+                        {% if product.quantity <= product.alertThreshold %}
+                            <div class="alert alert-danger bg-white bg-opacity-20 border-0 text-white mb-0 d-flex align-items-center py-2 px-3 rounded-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <span class="small fw-bold">Critical: Below threshold ({{ product.alertThreshold }})</span>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-success bg-white bg-opacity-20 border-0 text-white mb-0 d-flex align-items-center py-2 px-3 rounded-3">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <span class="small fw-bold">Stock level is healthy</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {# 2. META DATA (Bordure Grise ajoutée) #}
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 mb-4 bg-white">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-muted mb-4 small border-bottom border-light pb-2">System Info</h6>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted small">System ID:</span>
+                        <span class="small fw-bold text-dark">#PRD-{{ product.id|format('%04d') }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Alert Trigger:</span>
+                        <span class="small fw-bold text-danger">{{ product.alertThreshold }} units</span>
+                    </div>
+                </div>
+            </div>
+
+            {# 3. DANGER ZONE #}
+            <div class="card border-0 shadow-sm rounded-4 text-white overflow-hidden" style="background: linear-gradient(135deg, #ff4d4d 0%, #c0392b 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-white text-uppercase mb-3 border-bottom border-white border-opacity-25 pb-2 small">
+                        <i class="fas fa-trash-alt me-2"></i> Danger Zone
+                    </h6>
+                    <p class="text-white opacity-75 small mb-4">
+                        Permanent action. Deleting this product will remove it from all inventory records.
+                    </p>
+                    
+                    <form method="post" action="{{ path('admin_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Delete this product permanently?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                        <button class="btn btn-light text-danger w-100 fw-bold rounded-pill shadow-sm py-2">
+                             Delete Product
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

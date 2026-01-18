@@ -1,0 +1,283 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<style>
+    .card-kpi {
+        border: none;
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        color: white !important;
+        min-height: 160px;
+    }
+    .card-kpi:hover { transform: translateY(-5px); }
+
+    .bg-gradient-blue { background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%) !important; }
+    .bg-gradient-purple { background: linear-gradient(135deg, #AB47BC 0%, #7B1FA2 100%) !important; }
+    .bg-gradient-red { background: linear-gradient(135deg, #FF5252 0%, #D32F2F 100%) !important; }
+    .bg-gradient-green { background: linear-gradient(135deg, #66BB6A 0%, #388E3C 100%) !important; }
+
+    .icon-bg {
+        position: absolute;
+        right: -20px; bottom: -20px;
+        font-size: 7rem; opacity: 0.15;
+        transform: rotate(-20deg);
+        z-index: 0; color: white;
+    }
+    .card-content { position: relative; z-index: 1; }
+    .card-widget { border: none; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); background: white; }
+    .table-hover tbody tr:hover { background-color: #f8f9fa; }
+</style>
+
+<div class="container-fluid px-4 py-5 bg-light min-vh-100">
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="fw-bold text-dark mb-1">Admin <span class="text-primary">Dashboard</span></h1>
+            <p class="text-muted mb-0">Overview and business intelligence</p>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="bg-white px-4 py-2 rounded-pill shadow-sm text-muted fw-bold border">
+                <i class="far fa-calendar-alt me-2"></i> {{ currentDate|date("F j, Y") }}
+            </div>
+            <a href="{{ path('admin_purchase_index') }}" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm fw-bold">
+                <i class="fas fa-shopping-cart me-2"></i>Manage Orders
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-kpi bg-gradient-blue p-4">
+                <div class="card-content d-flex justify-content-between align-items-center h-100">
+                    <div>
+                        <h6 class="text-uppercase fw-bold opacity-75 mb-2">Total Products</h6>
+                        <h2 class="display-4 fw-bold mb-0">{{ totalProducts }}</h2>
+                    </div>
+                    <div class="p-3 bg-white bg-opacity-25 rounded-circle text-white">
+                        <i class="fas fa-cubes fa-2x"></i>
+                    </div>
+                </div>
+                <i class="fas fa-cubes icon-bg"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-kpi bg-gradient-purple p-4">
+                <div class="card-content d-flex justify-content-between align-items-center h-100">
+                    <div>
+                        <h6 class="text-uppercase fw-bold opacity-75 mb-2">Total Shipments</h6>
+                        <h2 class="display-4 fw-bold mb-0">{{ totalMovements }}</h2>
+                    </div>
+                    <div class="p-3 bg-white bg-opacity-25 rounded-circle text-white">
+                        <i class="fas fa-shipping-fast fa-2x"></i>
+                    </div>
+                </div>
+                <i class="fas fa-truck-loading icon-bg"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-kpi bg-gradient-red p-4">
+                <div class="card-content d-flex justify-content-between align-items-center h-100">
+                    <div>
+                        <h6 class="text-uppercase fw-bold opacity-75 mb-2">Stock Alerts</h6>
+                        <h2 class="display-4 fw-bold mb-0">{{ lowStock }}</h2>
+                    </div>
+                    <div class="p-3 bg-white bg-opacity-25 rounded-circle text-white">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    </div>
+                </div>
+                <i class="fas fa-bell icon-bg"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-kpi bg-gradient-green p-4">
+                <div class="card-content d-flex justify-content-between align-items-center h-100">
+                    <div>
+                        <h6 class="text-uppercase fw-bold opacity-75 mb-2">Pending Requests</h6>
+                        <h2 class="display-4 fw-bold mb-0">{{ pendingRequests|length }}</h2>
+                    </div>
+                    <div class="p-3 bg-white bg-opacity-25 rounded-circle text-white">
+                        <i class="fas fa-file-invoice-dollar fa-2x"></i>
+                    </div>
+                </div>
+                <i class="fas fa-file-signature icon-bg"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card card-widget h-100">
+                <div class="card-header bg-white border-0 pt-4 ps-4">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-chart-bar me-2 text-primary"></i>Top Inventory</h5>
+                </div>
+                <div class="card-body">
+                    <div id="bar_chart" style="width: 100%; height: 350px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card card-widget h-100">
+                <div class="card-header bg-white border-0 pt-4 ps-4">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-chart-pie me-2 text-info"></i>Category Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div id="pie_chart" style="width: 100%; height: 350px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-lg-8">
+            <div class="card card-widget h-100">
+                <div class="card-header bg-white border-0 pt-4 ps-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-tasks me-2 text-warning"></i>Quick Approval</h5>
+                    {% if pendingRequests|length > 0 %}
+                        <span class="badge bg-danger rounded-pill">Action Required</span>
+                    {% endif %}
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted">
+                                <tr>
+                                    <th class="ps-4 small text-uppercase">Product</th>
+                                    <th class="small text-uppercase">Quantity</th>
+                                    <th class="small text-uppercase">Requester</th>
+                                    <th class="text-end pe-4 small text-uppercase">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for req in pendingRequests %}
+                                <tr>
+                                    <td class="ps-4 fw-bold text-dark">{{ req.product.name }}</td>
+
+                                    <td>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                                            +{{ req.quantity }}
+                                        </span>
+                                    </td>
+
+                                    <td class="text-muted">
+                                        {{ req.requestedBy.email|default('Manager') }}
+                                    </td>
+
+                                    <td class="text-end pe-4">
+                                        {# ✅ IMPORTANT : POST + CSRF #}
+                                        <form method="post" action="{{ path('admin_purchase_approve', {'id': req.id}) }}" class="d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('approve' ~ req.id) }}">
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-success rounded-pill px-3 shadow-sm text-white fw-bold"
+                                                    onclick="return confirm('Valider cette demande ?');">
+                                                <i class="fas fa-check"></i> Approve
+                                            </button>
+                                        </form>
+
+                                        {# Optionnel : Reject (si vous voulez aussi depuis Dashboard)
+                                        <form method="post" action="{{ path('admin_purchase_reject', {'id': req.id}) }}" class="d-inline ms-2">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('reject' ~ req.id) }}">
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-sm fw-bold"
+                                                    onclick="return confirm('Refuser cette demande ?');">
+                                                <i class="fas fa-times"></i> Reject
+                                            </button>
+                                        </form>
+                                        #}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-5">
+                                        <div class="d-flex flex-column align-items-center opacity-50">
+                                            <i class="fas fa-check-circle fa-4x mb-3 text-success"></i>
+                                            <h5 class="fw-bold text-dark">All caught up!</h5>
+                                            <p class="small text-muted mb-0">No pending requests.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card card-widget h-100">
+                <div class="card-header bg-white border-0 pt-4 ps-4">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-brain me-2" style="color:#AB47BC"></i>AI Insights
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for item in intelligence %}
+                        <div class="d-flex align-items-center mb-3 p-3 rounded-4 bg-light">
+                            <div class="me-3 text-{{ item.color }} bg-white p-2 rounded-3 shadow-sm">
+                                <i class="fas {{ item.icon }} fa-lg"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold text-dark">{{ item.name }}</h6>
+                                <small class="text-{{ item.color }} fw-bold text-uppercase" style="font-size: 0.7rem;">
+                                    {% if item.status == 'Stock Dormant' %}
+                                        Dormant Stock
+                                    {% elseif item.status == 'Rupture Proche' %}
+                                        Low Stock
+                                    {% else %}
+                                        {{ item.status }}
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center mt-4">No insights available.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawCharts);
+
+    function drawCharts() {
+        var barData = google.visualization.arrayToDataTable({{ barData|raw }});
+        var barOptions = {
+            legend: { position: 'none' },
+            colors: ['#1976D2'],
+            vAxis: { title: 'Quantity' },
+            chartArea: { width: '85%', height: '75%' }
+        };
+        new google.visualization.ColumnChart(document.getElementById('bar_chart')).draw(barData, barOptions);
+
+        var pieData = google.visualization.arrayToDataTable({{ pieData|raw }});
+        var pieOptions = {
+            pieHole: 0.6,
+            colors: ['#4285F4', '#EA4335', '#FBBC05', '#34A853', '#AA00FF'],
+            legend: { position: 'right' },
+            chartArea: { width: '90%', height: '85%' }
+        };
+        new google.visualization.PieChart(document.getElementById('pie_chart')).draw(pieData, pieOptions);
+    }
+
+    window.onresize = drawCharts;
+</script>
+{% endblock %}

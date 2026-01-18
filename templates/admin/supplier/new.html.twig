@@ -1,0 +1,54 @@
+{# templates/admin/supplier/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}New Supplier{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-5 bg-light min-vh-100">
+    
+    <div class="mb-4">
+        <a href="{{ path('admin_supplier_index') }}" class="text-decoration-none text-muted small fw-bold text-uppercase">
+            <i class="fas fa-arrow-left me-2"></i> Back to Directory
+        </a>
+        <h1 class="fw-bold text-dark mt-2">Register New <span class="text-primary">Supplier</span></h1>
+        <p class="text-muted">Add a new commercial partner to your procurement network.</p>
+    </div>
+
+    <div class="row g-4">
+        {# FORMULAIRE #}
+        <div class="col-lg-8">
+            {{ include('admin/supplier/_form.html.twig') }}
+        </div>
+
+        {# SIDEBAR INFO (CARTE BLEUE) #}
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4 text-white" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-white mb-4 border-bottom border-white border-opacity-25 pb-2">
+                        <i class="far fa-lightbulb me-2"></i>Quick Tip
+                    </h6>
+                    <p class="small text-white opacity-75 mb-4">
+                        Linking suppliers to your products allows for better tracking of purchase prices and restock delays.
+                    </p>
+
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center mb-3">
+                            <i class="fas fa-check-circle me-3 text-white-50"></i>
+                            <span class="small text-white fw-bold">Track Origins</span>
+                        </li>
+                        <li class="d-flex align-items-center mb-3">
+                            <i class="fas fa-check-circle me-3 text-white-50"></i>
+                            <span class="small text-white fw-bold">Manage Contacts</span>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <i class="fas fa-check-circle me-3 text-white-50"></i>
+                            <span class="small text-white fw-bold">Analyze Costs</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

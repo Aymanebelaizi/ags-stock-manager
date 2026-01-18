@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Product{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-5 bg-light min-vh-100">
+    
+    {# HEADER : Même style que "Edit Movement" #}
+    <div class="mb-5">
+        <a href="{{ path('admin_product_index') }}" class="text-decoration-none small fw-bold text-muted text-uppercase">
+            <i class="fas fa-arrow-left me-2"></i> Back to Inventory
+        </a>
+        <h1 class="fw-bold text-dark mt-3">Edit <span class="text-primary">Product</span></h1>
+        <p class="text-muted small">Modify and correct information for an existing inventory item.</p>
+    </div>
+
+    {{ form_start(form) }}
+    <div class="row g-4">
+        
+        {# COLONNE GAUCHE : Formulaire avec Bordures Grises #}
+        <div class="col-lg-8">
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 p-5 bg-white">
+                
+                {# En-tête interne du formulaire #}
+                <h6 class="text-uppercase text-muted small fw-bold mb-4 border-bottom pb-3">
+                    <i class="fas fa-edit me-2"></i> Product Data Entry
+                </h6>
+
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Product Name</label>
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Reference (SKU)</label>
+                        {{ form_widget(form.reference, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Category</label>
+                        {{ form_widget(form.category, {'attr': {'class': 'form-select border-secondary-subtle'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Current Stock</label>
+                        {{ form_widget(form.quantity, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Alert Threshold</label>
+                        {{ form_widget(form.alertThreshold, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Purchase Price</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-secondary-subtle text-muted small fw-bold">MAD</span>
+                            {{ form_widget(form.purchasePrice, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Sales Price</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-secondary-subtle text-muted small fw-bold">MAD</span>
+                            {{ form_widget(form.salesPrice, {'attr': {'class': 'form-control border-secondary-subtle'}}) }}
+                        </div>
+                    </div>
+
+                    {# BOUTONS ALIGNÉS #}
+                    <div class="col-12 mt-5 text-end border-top pt-4 d-flex justify-content-end gap-2">
+                        <a href="{{ path('admin_product_index') }}" class="btn btn-light border border-secondary-subtle px-4 py-2 fw-bold rounded-pill text-muted">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill shadow-sm" style="background: #1a73e8 !important; border: none;">
+                            <i class="fas fa-check-circle me-2"></i> Update Product
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# COLONNE DROITE : Sidebar complète #}
+        <div class="col-lg-4">
+            
+            {# 1. IMPORTANT NOTE (Bleu) #}
+            <div class="card border-0 shadow-sm rounded-4 text-white mb-4" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-white mb-3 border-bottom border-white border-opacity-25 pb-2 small">
+                        <i class="fas fa-info-circle me-2"></i> Important Note
+                    </h6>
+                    <div class="d-flex">
+                        <i class="fas fa-Exclamation-circle me-2 mt-1"></i>
+                        <p class="small opacity-75 mb-0">
+                            Updating <strong>Current Stock</strong> here will manually override the balance. It is recommended to use the <strong>Movements</strong> module for traceable stock changes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {# 2. META INFORMATION (Bordure grise) #}
+            <div class="card border border-secondary-subtle shadow-sm rounded-4 mb-4 bg-white">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-muted mb-4 small border-bottom pb-2">Meta Information</h6>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted small">Product ID:</span>
+                        <span class="small fw-bold">#{{ product.id }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Last Reference:</span>
+                        <span class="small fw-bold">{{ product.reference }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {# 3. DANGER ZONE (Rouge) #}
+            <div class="card border-0 shadow-sm rounded-4 text-white" style="background: linear-gradient(135deg, #ff4d4d 0%, #c0392b 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-white text-uppercase mb-3 border-bottom border-white border-opacity-25 pb-2 small">
+                        <i class="fas fa-skull-crossbones me-2"></i> Danger Zone
+                    </h6>
+                    <p class="text-white opacity-75 small mb-4">
+                        Deleting this product will remove all its history from the AGS system. This cannot be undone.
+                    </p>
+                    
+                    <form method="post" action="{{ path('admin_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Confirm permanent deletion?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                        <button class="btn btn-light text-danger w-100 fw-bold rounded-pill shadow-sm">
+                            <i class="fas fa-trash-alt me-2"></i> Delete Product
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

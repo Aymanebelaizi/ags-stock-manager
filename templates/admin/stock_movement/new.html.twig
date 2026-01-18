@@ -1,0 +1,68 @@
+{# templates/admin/stock_movement/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}New Movement{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-5 bg-light min-vh-100">
+    
+    <div class="mb-4">
+        <a href="{{ path('admin_movement_index') }}" class="text-decoration-none text-muted small fw-bold text-uppercase">
+            <i class="fas fa-arrow-left me-2"></i> Back to History
+        </a>
+        <h1 class="fw-bold text-dark mt-2">Record a <span class="text-primary">Movement</span></h1>
+        <p class="text-muted">Enter details for stock entry or exit.</p>
+    </div>
+
+    <div class="row g-4">
+        {# LEFT COLUMN: The Form (White) #}
+        <div class="col-lg-8">
+            {{ include('admin/stock_movement/_form.html.twig') }}
+        </div>
+
+        {# RIGHT COLUMN: The Guide (BLUE CARD) #}
+        <div class="col-lg-4">
+            {# Carte Bleue "Premium" #}
+            <div class="card border-0 shadow-sm rounded-4 mb-4 text-white" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-uppercase text-white-50 mb-4 border-bottom border-white border-opacity-25 pb-2">
+                        <i class="far fa-lightbulb me-2"></i>Quick Guide
+                    </h6>
+                    
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-start mb-4">
+                            <span class="badge bg-white text-primary rounded-circle p-2 me-3 mt-1 shadow-sm">
+                                <i class="fas fa-plus fa-sm"></i>
+                            </span>
+                            <div>
+                                <span class="fw-bold d-block">When to use "Entry"?</span>
+                                <small class="text-white-50">For supplier receipts, customer returns, or positive inventory adjustments.</small>
+                            </div>
+                        </li>
+
+                        <li class="d-flex align-items-start">
+                            <span class="badge bg-white text-danger rounded-circle p-2 me-3 mt-1 shadow-sm">
+                                <i class="fas fa-minus fa-sm"></i>
+                            </span>
+                            <div>
+                                <span class="fw-bold d-block">When to use "Exit"?</span>
+                                <small class="text-white-50">For sales, internal consumption, loss, or damaged goods.</small>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {# Info Alert (Grey/Blueish) #}
+            <div class="alert alert-light border-0 shadow-sm rounded-4 d-flex align-items-center text-dark" role="alert">
+                <i class="fas fa-info-circle fa-2x me-3 text-primary"></i>
+                <div>
+                    <small class="fw-bold d-block">Instant Update</small>
+                    <small class="text-muted">Product stock will be recalculated immediately upon validation.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
